@@ -1,0 +1,3706 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Void Lord's Blacklist Challenge — LoL Champion Wheel</title>
+  <meta name="description" content="Spin the wheel, get a League of Legends champion revealed in their rarest skin, then survive the run. Win streaks, the Zilean revival, and an ever-growing blacklist." />
+  <meta name="author" content="Hir" />
+  <meta name="theme-color" content="#0bc4e3" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><polygon points='16,1 30,12 16,31 2,12' fill='%230bc4e3'/><polygon points='16,1 30,12 16,16 2,12' fill='%2390ecf9'/><polygon points='16,16 30,12 16,31' fill='%2307a6c2'/></svg>" />
+  <!-- Open Graph / social share -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Void Lord's Blacklist Challenge" />
+  <meta property="og:description" content="Spin the wheel, get a champion in their rarest skin, and survive the run. How long can your blacklist stay short?" />
+  <meta property="og:image" content="og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Void Lord's Blacklist Challenge" />
+  <meta name="twitter:description" content="Spin the wheel, get a champion in their rarest skin, and survive the run." />
+  <meta name="twitter:image" content="og-image.jpg" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET ─────────────────────────────────── */
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    /* ─── ROOT VARS ──────────────────────────────── */
+    :root {
+      --gold:       #c8aa6e;
+      --gold-b:     #f0e6d3;
+      --gold-d:     #785a28;
+      --red:        #cc1010;
+      --red-b:      #ff4444;
+      --cyan:       #0bc4e3;
+      --yellow:     #f0c030;
+      --green:      #4caf50;
+      --lose-red:   #f44336;
+      --bg:         #050505;
+    }
+
+    /* ─── BODY ───────────────────────────────────── */
+    body {
+      background: var(--bg);
+      color: #fff;
+      font-family: 'Cinzel', Georgia, serif;
+      width: 100vw; height: 100vh;
+      overflow: hidden;
+      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+
+    /* ─── LIVE BACKGROUND ────────────────────────── */
+    /*
+      HOW TO USE YOUR LIVE BACKGROUND:
+      Place your background video file (e.g. background.mp4) in the same
+      folder as this HTML file, then change the src below.
+      Alternatively, replace <video> with <img> for a static image/gif.
+    */
+    #bg-video {
+      position: fixed; z-index: 0;
+      /* oversized so parallax translate never shows edges */
+      width: calc(100% + 80px); height: calc(100% + 80px);
+      top: -40px; left: -40px;
+      object-fit: cover;
+      opacity: 0.55;
+      pointer-events: none;
+      will-change: transform;
+    }
+    /* Dark vignette over background */
+    #bg-vignette {
+      position: fixed; inset: 0; z-index: 1;
+      background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+      pointer-events: none;
+    }
+
+    /* ─── LOADING ────────────────────────────────── */
+    #loading {
+      position: fixed; inset: 0; z-index: 999;
+      background: #000;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 14px;
+    }
+    #loading h2 { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; letter-spacing:6px; color:#fff; }
+    #loading p  { font-size:0.6rem; letter-spacing:2px; color:#555; text-transform:uppercase; }
+    .bar-wrap { width:340px; height:4px; background:#111; border-radius:2px; overflow:hidden; }
+    .bar-fill { height:100%; width:0; background:linear-gradient(90deg,#600,var(--red)); transition:width .1s; border-radius:2px; }
+
+    /* ─── ALL UI ON TOP OF BACKGROUND ───────────── */
+    #ui { position:relative; z-index:2; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; }
+
+    /* ─── TITLE ──────────────────────────────────── */
+    #app-version {
+      display: block;
+      text-align: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.45);
+      margin-top: 2px;
+      margin-bottom: 4px;
+      pointer-events: none;
+      user-select: none;
+    }
+    #title {
+      margin-top: 14px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      letter-spacing: 6px;
+      color: #fff;
+      text-shadow:
+        0 0 30px rgba(200,30,30,0.6),
+        2px 2px 0 #000,
+        -1px -1px 0 #000;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1;
+    }
+
+    /* ─── WHEEL AREA ─────────────────────────────── */
+    #wheel-wrap {
+      flex: 1; display:flex; align-items:center; justify-content:center;
+      position: relative;
+    }
+    #wheel { display:block; cursor:pointer; }
+
+    /* ─── BOTTOM HUD ─────────────────────────────── */
+    #hud-bottom {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      padding: 0 22px 18px;
+      pointer-events: none;
+      z-index: 10;
+    }
+    #hud-left, #hud-right {
+      display: flex; flex-direction: column; gap: 8px;
+      pointer-events: all;
+    }
+    #hud-right { align-items: flex-end; }
+
+    /* stat box */
+    .hud-box {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 28px;
+      padding: 11px 20px;
+      background: rgba(0,0,0,0.72);
+      border-radius: 4px;
+      border: 1.5px solid;
+      backdrop-filter: blur(4px);
+      min-width: 210px;
+    }
+    .hud-box .lbl { font-size:0.70rem; letter-spacing:2px; text-transform:uppercase; opacity:.75; }
+    .hud-box .val { font-size:1.35rem; font-weight:700; font-family:'Bebas Neue',sans-serif; letter-spacing:2px; }
+    /* color variants */
+    .hud-yellow { border-color:var(--yellow); }
+    .hud-yellow .lbl { color:var(--yellow); }
+    .hud-yellow .val { color:var(--yellow); }
+    .hud-cyan   { border-color:var(--cyan); }
+    .hud-cyan   .lbl { color:var(--cyan); }
+    .hud-cyan   .val { color:var(--cyan); }
+    .hud-white  { border-color:#ccc; }
+    .hud-white  .lbl { color:#bbb; }
+    .hud-white  .val { color:#fff; }
+    .hud-blue   { border-color:#4488ff; }
+    .hud-blue   .lbl { color:#88aaff; }
+    .hud-blue   .val { color:#cce0ff; }
+    .hud-red    { border-color:var(--red-b); }
+    .hud-red    .lbl { color:#ff9999; }
+    .hud-red    .val { color:var(--red-b); }
+
+    /* blacklist button */
+    .bl-open-btn {
+      padding: 11px 20px;
+      background: rgba(0,0,0,0.72);
+      border: 1.5px solid #555;
+      color: #aaa;
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem; letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: .2s;
+      min-width: 210px;
+    }
+    .bl-open-btn:hover { border-color:#888; color:#fff; }
+
+    /* ─── UNDO BLACKLIST BUTTON ──────────────────── */
+    #undo-bl-btn {
+      padding: 7px 16px;
+      background: rgba(30,12,0,0.85);
+      border: 1.5px solid #c8702a;
+      color: #f09050;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem; letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: .2s;
+      display: none;
+      align-self: flex-end;
+      margin-top: -4px;
+    }
+    #undo-bl-btn:hover { border-color:#f09050; color:#ffc080; background:rgba(60,20,0,0.9); }
+
+    /* ─── LIVE GAME BUTTON ───────────────────────── */
+    #lg-open-btn {
+      padding: 11px 20px;
+      background: rgba(0,10,30,0.82);
+      border: 1.5px solid #1a6fff55;
+      color: #5599ff;
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem; letter-spacing: 2px;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: .2s;
+      min-width: 210px;
+      display: none;
+    }
+    #lg-open-btn:hover { border-color:#5599ff; color:#88bbff; }
+    #lg-open-btn.in-game { border-color:#22ff88; color:#22ff88; animation: lg-pulse 2s infinite; }
+    @keyframes lg-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(34,255,136,0); }
+      50%      { box-shadow: 0 0 8px 2px rgba(34,255,136,0.35); }
+    }
+
+    /* ─── LIVE GAME OVERLAY ──────────────────────── */
+    #lg-ov {
+      position: fixed; inset: 0; z-index: 110;
+      background: rgba(4,6,14,0.97);
+      backdrop-filter: blur(14px);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      overflow-y: auto; padding: 22px 20px 40px;
+    }
+    #lg-ov.on { display: flex; }
+    #lg-header {
+      width: 100%; max-width: 1100px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    #lg-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: 6px; color: #5599ff;
+    }
+    #lg-status {
+      font-family: 'Cinzel', serif;
+      font-size: 0.60rem; letter-spacing: 2px;
+      color: #445; margin-top: 3px;
+    }
+    #lg-close {
+      background: none; border: 1px solid #222;
+      color: #666; padding: 6px 14px; border-radius: 4px;
+      cursor: pointer; font-family: 'Cinzel', serif;
+      font-size: 0.65rem; letter-spacing: 2px; transition: .2s;
+    }
+    #lg-close:hover { border-color:#aaa; color:#fff; }
+    #lg-refresh {
+      background: none; border: 1px solid #1a6fff44;
+      color: #5599ff; padding: 6px 14px; border-radius: 4px;
+      cursor: pointer; font-family: 'Cinzel', serif;
+      font-size: 0.62rem; letter-spacing: 2px; transition: .2s; margin-right: 8px;
+    }
+    #lg-refresh:hover { border-color:#5599ff; color:#88bbff; }
+
+    /* Porofessor-style — one horizontal row per team */
+    .lg-team-section { width: 100%; max-width: 1100px; margin-bottom: 16px; }
+    .lg-team-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.78rem; letter-spacing: 5px;
+      margin-bottom: 8px; padding: 4px 10px; display: inline-block;
+      border-radius: 3px;
+    }
+    .lg-team-label.blue { color:#5599ff; background:rgba(0,30,80,0.5); border:1px solid #1a6fff33; }
+    .lg-team-label.red  { color:#ff5555; background:rgba(80,0,0,0.5);  border:1px solid #ff333333; }
+    .lg-cards-row {
+      display: flex; gap: 10px;
+    }
+
+    /* Individual player card */
+    .lg-card {
+      flex: 1; min-width: 0;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px; padding: 12px 10px;
+      display: flex; flex-direction: column; gap: 8px;
+      transition: background .2s;
+    }
+    .lg-card:hover  { background: rgba(255,255,255,0.06); }
+    .lg-card.is-me  { border-color: rgba(200,170,110,0.5); background: rgba(25,18,0,0.6); }
+    .lg-card.blue-t { border-top: 2px solid #1a6fff55; }
+    .lg-card.red-t  { border-top: 2px solid #ff333355; }
+    .lg-card.is-me  { border-top-color: #c8aa6e; }
+
+    /* Top: champion portrait + name */
+    .lg-card-top { display: flex; align-items: center; gap: 8px; }
+    .lg-champ-wrap { position: relative; flex-shrink: 0; }
+    .lg-champ-img {
+      width: 46px; height: 46px; border-radius: 8px;
+      object-fit: cover; object-position: center top;
+      border: 2px solid rgba(255,255,255,0.12);
+    }
+    .lg-mastery-badge {
+      position: absolute; bottom: -3px; right: -3px;
+      padding: 1px 4px; border-radius: 4px;
+      background: #0a0a0a; border: 1px solid #333;
+      font-size: 0.48rem; font-family: 'Bebas Neue', sans-serif;
+    }
+    .lg-card-names { flex:1; min-width:0; }
+    .lg-player-name {
+      font-family: 'Cinzel', serif; font-size: 0.62rem;
+      letter-spacing: 0.5px; color: #ddd;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .lg-champ-name {
+      font-family: 'Cinzel', serif; font-size: 0.52rem;
+      letter-spacing: 1px; color: #555;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    /* Champion stats (W/R + KDA on champion) */
+    .lg-champ-stats {
+      background: rgba(0,0,0,0.3); border-radius: 5px;
+      padding: 6px 8px;
+    }
+    .lg-champ-wr {
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem;
+      letter-spacing: 1px; margin-bottom: 2px;
+    }
+    .lg-champ-wr-sub {
+      font-family: 'Cinzel', serif; font-size: 0.50rem;
+      letter-spacing: 1px; color: #555;
+    }
+    .lg-kda {
+      font-family: 'Bebas Neue', sans-serif; font-size: 0.72rem;
+      letter-spacing: 1px; color: #aaa; margin-top: 3px;
+    }
+
+    /* Rank section */
+    .lg-rank-section { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .lg-rank-badge {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.68rem; letter-spacing: 1px;
+      padding: 2px 7px; border-radius: 8px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .lg-season-wl {
+      font-family: 'Cinzel', serif; font-size: 0.50rem;
+      letter-spacing: 0.5px; color: #555; white-space: nowrap;
+    }
+
+    .lg-loading, .lg-not-in-game {
+      width: 100%; max-width: 1100px;
+      text-align: center; padding: 80px 0;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem; letter-spacing: 3px; color: #333;
+    }
+
+    /* ─── SIDEBAR TABS ───────────────────────────── */
+    #sb-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(200,170,110,0.18);
+      flex-shrink: 0;
+    }
+    .sb-tab-btn {
+      flex: 1;
+      padding: 10px 4px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #666;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.72rem; letter-spacing: 3px;
+      cursor: pointer;
+      transition: .2s;
+      text-transform: uppercase;
+    }
+    .sb-tab-btn:hover { color: #aaa; }
+    .sb-tab-btn.active { color: var(--yellow); border-bottom-color: var(--yellow); }
+
+    /* ─── SESSION LOG ROWS ───────────────────────── */
+    .sl-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .sl-row img {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      object-fit: cover; object-position: center top;
+      flex-shrink: 0;
+    }
+    .sl-name {
+      flex: 1; min-width: 0;
+      font-size: 0.58rem; letter-spacing: 1px;
+      color: #ccc; text-transform: uppercase;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-family: 'Cinzel', serif;
+    }
+    .sl-outcome {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.68rem; letter-spacing: 1px;
+      padding: 2px 7px; border-radius: 10px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .sl-outcome.win  { color:#a8f0a8; background:rgba(20,70,20,0.85); border:1px solid rgba(76,175,80,0.45); }
+    .sl-outcome.lose { color:#f0a8a8; background:rgba(70,10,10,0.85); border:1px solid rgba(200,50,50,0.45); }
+    .sl-time {
+      font-size: 0.52rem; color: #444;
+      font-family: 'Cinzel', serif;
+      flex-shrink: 0;
+    }
+
+    /* ─── OVERLAYS ───────────────────────────────── */
+    .overlay {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.88);
+      display:none; align-items:center; justify-content:center;
+      z-index:100;
+    }
+    .overlay.on { display:flex; }
+
+    /* ─── FULL-SCREEN RESULT ─────────────────────── */
+    #result-screen {
+      position: fixed; inset: 0; z-index: 60;
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .4s ease;
+      background: #000;
+    }
+    #result-screen.on  { display: flex; }
+    #result-screen.vis { opacity: 1; }
+
+    #result-bg {
+      position: absolute; inset: 0;
+      background: #050505;
+      overflow: hidden;
+    }
+    #result-splash {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: brightness(0.68);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    #result-splash.loaded { opacity: 1; }
+
+    /* ── Transcendent shimmer — sweeping light when no animated video is available ── */
+    #transcendent-shimmer {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 2;
+      opacity: 0; transition: opacity 0.5s ease;
+      background: linear-gradient(
+        115deg,
+        transparent 30%,
+        rgba(200,238,255,0.08) 45%,
+        rgba(200,238,255,0.22) 50%,
+        rgba(200,238,255,0.08) 55%,
+        transparent 70%
+      );
+      background-size: 250% 100%;
+      background-position: 100% 0;
+    }
+    #transcendent-shimmer.active {
+      opacity: 1;
+      animation: shimmerSweep 2.8s ease-in-out infinite;
+    }
+    @keyframes shimmerSweep {
+      0%   { background-position: 150% 0; }
+      100% { background-position: -50% 0; }
+    }
+
+    /* gradient darkens bottom so buttons are readable */
+    #result-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.08) 0%,
+        rgba(0,0,0,0.02) 30%,
+        rgba(0,0,0,0.50) 65%,
+        rgba(0,0,0,0.90) 100%
+      );
+      pointer-events: none;
+    }
+    #result-content {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      height: 100%; width: 100%;
+      padding-bottom: 8vh;
+    }
+    #r-label {
+      font-size: 0.65rem; letter-spacing: 5px;
+      color: rgba(255,255,255,0.7); text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    #r-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 11vw, 9.5rem);
+      color: #fff; line-height: 0.88;
+      letter-spacing: 3px; text-align: center;
+      text-shadow: 0 4px 40px rgba(0,0,0,0.9), 2px 2px 0 #000;
+      margin-bottom: 6px;
+    }
+    #r-wins {
+      font-size: 0.7rem; letter-spacing: 3px;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: 4vh;
+    }
+    #r-btns {
+      display: flex; gap: 18px;
+    }
+    .btn-win {
+      background: linear-gradient(180deg,#1e7a1e,#0c4a0c);
+      border: 2px solid var(--green); color: #a8f0a8;
+      padding: 14px 36px; font-family:'Cinzel',serif;
+      font-size: 1rem; letter-spacing: 2px; font-weight: 700;
+      border-radius: 4px; cursor: pointer; transition: .2s;
+      text-transform: uppercase; min-width: 160px;
+    }
+    .btn-win:hover  { background:linear-gradient(180deg,#2a9a2a,#1a6a1a); box-shadow:0 0 20px rgba(76,175,80,.6); }
+    .btn-lose {
+      background: linear-gradient(180deg,#7a1e1e,#4a0c0c);
+      border: 2px solid var(--lose-red); color: #f0a8a8;
+      padding: 14px 36px; font-family:'Cinzel',serif;
+      font-size: 1rem; letter-spacing: 2px; font-weight: 700;
+      border-radius: 4px; cursor: pointer; transition: .2s;
+      text-transform: uppercase; min-width: 160px;
+    }
+    .btn-lose:hover { background:linear-gradient(180deg,#9a2a2a,#6a1a1a); box-shadow:0 0 20px rgba(244,67,54,.6); }
+    .btn-respin {
+      background: linear-gradient(180deg,#003f7a,#001f40);
+      border: 2px solid #4488ff; color: #aaccff;
+      padding: 14px 36px; font-family:'Cinzel',serif;
+      font-size: 1rem; letter-spacing: 2px; font-weight: 700;
+      border-radius: 4px; cursor: pointer; transition: .2s;
+      text-transform: uppercase; min-width: 160px;
+    }
+    .btn-respin:hover { background:linear-gradient(180deg,#0052a0,#003080); box-shadow:0 0 20px rgba(68,136,255,.5); }
+    .btn-afk {
+      background: linear-gradient(180deg,#2a2a2a,#111);
+      border: 2px solid #666; color: #aaa;
+      padding: 14px 36px; font-family:'Cinzel',serif;
+      font-size: 1rem; letter-spacing: 2px; font-weight: 700;
+      border-radius: 4px; cursor: pointer; transition: .2s;
+      text-transform: uppercase; min-width: 160px;
+    }
+    .btn-afk:hover { background:linear-gradient(180deg,#3a3a3a,#222); border-color:#999; color:#fff; box-shadow:0 0 14px rgba(180,180,180,.25); }
+
+    /* ─── ZILEAN BOX ─────────────────────────────── */
+    .z-box {
+      background:linear-gradient(170deg,#080e18,#05050a);
+      border:2px solid var(--cyan);
+      border-radius:6px; padding:28px 44px;
+      text-align:center; min-width:340px;
+      box-shadow:0 0 50px rgba(11,196,227,.15);
+    }
+    .z-img-wrap { width:120px; height:120px; border-radius:50%; border:3px solid var(--cyan); overflow:hidden; margin:0 auto 14px; box-shadow:0 0 24px rgba(11,196,227,.35); }
+    .z-img-wrap img { width:100%; height:100%; object-fit:cover; object-position:center top; }
+    .z-title  { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:4px; color:var(--cyan); margin-bottom:4px; }
+    .z-streak { font-size:0.6rem; letter-spacing:2px; color:var(--yellow); margin-bottom:8px; text-transform:uppercase; }
+    .z-text   { font-size:0.7rem; letter-spacing:1px; color:#ccc; margin-bottom:22px; line-height:1.8; }
+    .z-btns   { display:flex; gap:14px; justify-content:center; }
+    .btn-take  { background:linear-gradient(180deg,#004a8f,#002d5a); border:2px solid var(--cyan); color:var(--cyan); padding:11px 28px; font-family:'Cinzel',serif; font-size:.88rem; letter-spacing:2px; font-weight:700; border-radius:4px; cursor:pointer; transition:.2s; text-transform:uppercase; }
+    .btn-take:hover  { background:linear-gradient(180deg,#0062be,#003d7a); box-shadow:0 0 14px rgba(11,196,227,.5); }
+    .btn-leave { background:transparent; border:2px solid #333; color:#555; padding:11px 28px; font-family:'Cinzel',serif; font-size:.88rem; letter-spacing:2px; font-weight:700; border-radius:4px; cursor:pointer; transition:.2s; text-transform:uppercase; }
+    .btn-leave:hover { border-color:#555; color:#888; }
+
+    /* ─── BLACKLIST PANEL ────────────────────────── */
+    .bl-box {
+      background:linear-gradient(170deg,#0d0d14,#05050a);
+      border:2px solid #2a2a3a;
+      border-radius:6px; padding:22px 28px;
+      min-width:380px; max-width:440px;
+      box-shadow:0 0 60px rgba(0,0,0,.8);
+    }
+    .bl-head { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:4px; color:#fff; border-bottom:1px solid #222; padding-bottom:10px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; }
+    .bl-close { background:transparent; border:1px solid #444; color:#888; font-size:0.7rem; padding:4px 12px; border-radius:2px; cursor:pointer; font-family:'Cinzel',serif; letter-spacing:1px; transition:.2s; text-transform:uppercase; }
+    .bl-close:hover { border-color:#888; color:#fff; }
+    .bl-scroll { max-height:380px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#333 transparent; }
+    .bl-empty  { font-size:0.6rem; letter-spacing:1px; color:#333; text-transform:uppercase; text-align:center; padding:28px 0; line-height:2; }
+    .bl-item   { display:flex; align-items:center; gap:10px; padding:7px 10px; border:1px solid #151520; border-radius:3px; margin-bottom:5px; background:#060810; }
+    .bl-item img { width:32px; height:32px; border-radius:50%; border:1px solid #333; object-fit:cover; object-position:center top; flex-shrink:0; }
+    .bl-name   { flex:1; font-size:0.65rem; letter-spacing:1px; color:#e05555; text-transform:uppercase; }
+    .bl-wins   { font-size:0.55rem; letter-spacing:1px; color:#555; text-transform:uppercase; }
+    .revive-btn { background:linear-gradient(180deg,#003f7a,#001f40); border:1.5px solid var(--cyan); color:var(--cyan); font-size:0.52rem; letter-spacing:1px; padding:4px 10px; border-radius:2px; cursor:pointer; font-family:'Cinzel',serif; text-transform:uppercase; transition:.15s; }
+    .revive-btn:hover:not(:disabled) { background:linear-gradient(180deg,#0052a0,#00285a); box-shadow:0 0 8px rgba(11,196,227,.35); }
+    .revive-btn:disabled { opacity:.2; cursor:not-allowed; border-color:#333; color:#444; }
+
+    /* ─── WINS HISTORY PANEL ────────────────────── */
+    .wh-box {
+      background:linear-gradient(170deg,#0a0d10,#05050a);
+      border:2px solid var(--yellow);
+      border-radius:6px; padding:22px 28px;
+      min-width:420px; max-width:500px;
+      box-shadow:0 0 60px rgba(0,0,0,.8);
+    }
+    .wh-head { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:4px; color:var(--yellow); border-bottom:1px solid #2a2200; padding-bottom:10px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; }
+    .wh-sub  { font-size:0.55rem; letter-spacing:2px; color:#555; text-transform:uppercase; font-family:'Cinzel',serif; align-self:flex-end; padding-bottom:2px; }
+    .wh-scroll { max-height:420px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#332200 transparent; }
+    .wh-empty  { font-size:0.6rem; letter-spacing:1px; color:#333; text-transform:uppercase; text-align:center; padding:28px 0; line-height:2; }
+    .wh-item   { display:flex; align-items:center; gap:12px; padding:8px 10px; border:1px solid #1a1500; border-radius:3px; margin-bottom:5px; background:#07060a; position:relative; }
+    .wh-rank   { font-family:'Bebas Neue',sans-serif; font-size:1rem; color:#333; min-width:20px; text-align:center; }
+    .wh-item img { width:38px; height:38px; border-radius:50%; border:2px solid var(--gold-d); object-fit:cover; object-position:center top; flex-shrink:0; }
+    .wh-info   { flex:1; }
+    .wh-name   { font-size:0.68rem; letter-spacing:1.5px; color:#ddd; text-transform:uppercase; margin-bottom:3px; }
+    .wh-bar-wrap { height:3px; background:#111; border-radius:2px; overflow:hidden; }
+    .wh-bar    { height:100%; background:linear-gradient(90deg,var(--gold-d),var(--yellow)); border-radius:2px; transition:width .4s; }
+    .wh-badge  { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; color:var(--yellow); min-width:36px; text-align:right; }
+    .wh-badge span { font-size:0.5rem; color:#555; letter-spacing:1px; text-transform:uppercase; vertical-align:super; margin-left:2px; }
+    /* top 3 tints */
+    .wh-item.rank-1 { border-color:#c8aa6e44; background:#0c0b06; }
+    .wh-item.rank-1 .wh-rank { color:var(--yellow); }
+    .wh-item.rank-1 img { border-color:var(--yellow); box-shadow:0 0 8px rgba(240,192,48,.3); }
+    .wh-item.rank-2 { border-color:#88888844; }
+    .wh-item.rank-2 .wh-rank { color:#aaa; }
+    .wh-item.rank-3 { border-color:#cd7f3244; }
+    .wh-item.rank-3 .wh-rank { color:#cd7f32; }
+
+    /* ─── RARITY FLASH ───────────────────────────── */
+    #rarity-flash {
+      position: fixed; inset: 0; z-index: 70;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      pointer-events: none; opacity: 0;
+    }
+    #rarity-flash.show { animation: rarityReveal 2.2s ease-out forwards; }
+    #rarity-flash-icon {
+      width: clamp(90px, 15vw, 180px);
+      height: auto;
+      display: block;
+      /* glow set dynamically via filter in JS */
+      animation: iconPulse 2.2s ease-out forwards;
+      opacity: 0;
+    }
+    #rarity-flash-icon.hidden { display: none; }
+    @keyframes iconPulse {
+      0%   { opacity:0; transform: scale(0.3) translateY(20px); }
+      18%  { opacity:1; transform: scale(1.12) translateY(0); }
+      60%  { opacity:1; transform: scale(1.0); }
+      100% { opacity:0; transform: scale(1.2); }
+    }
+    #rarity-flash-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 9vw, 7.5rem);
+      letter-spacing: 16px; text-align: center;
+      text-transform: uppercase;
+      filter: drop-shadow(0 0 40px currentColor) drop-shadow(0 0 80px currentColor);
+    }
+    @keyframes rarityReveal {
+      0%   { opacity:0; transform:scale(0.45) translateY(30px); }
+      16%  { opacity:1; transform:scale(1.06) translateY(0); }
+      62%  { opacity:1; transform:scale(1.00); }
+      100% { opacity:0; transform:scale(1.18); }
+    }
+
+    /* ─── STREAK CINEMATIC ───────────────────────── */
+    #streak-cinematic {
+      position: fixed; inset: 0; z-index: 55;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      pointer-events: none; opacity: 0;
+    }
+    #streak-cinematic.show { animation: streakAnim 2.6s cubic-bezier(0.16,1,0.3,1) forwards; }
+    #sc-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, var(--sc-color, #ff6b00) 0%, transparent 70%);
+      opacity: 0.12;
+    }
+    #sc-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(6rem, 22vw, 18rem);
+      line-height: 1; letter-spacing: -4px;
+      filter: drop-shadow(0 0 50px var(--sc-color, #ff6b00))
+              drop-shadow(0 0 100px var(--sc-color, #ff6b00));
+      color: var(--sc-color, #ff6b00);
+    }
+    #sc-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.2rem, 4vw, 2.8rem);
+      letter-spacing: 14px; color: #fff;
+      text-shadow: 0 0 20px var(--sc-color, #ff6b00);
+      margin-top: -0.15em;
+    }
+    #sc-sub {
+      font-size: 0.65rem; letter-spacing: 4px;
+      color: rgba(255,255,255,0.5); text-transform: uppercase;
+      margin-top: 12px;
+    }
+    @keyframes streakAnim {
+      0%   { opacity:0; transform:scale(0.7); }
+      10%  { opacity:1; transform:scale(1.04); }
+      55%  { opacity:1; transform:scale(1.00); }
+      100% { opacity:0; transform:scale(1.1); }
+    }
+
+    /* ─── GAME OVER (enhanced) ───────────────────── */
+    .go-box {
+      background: linear-gradient(170deg,#140505,#05050a);
+      border: 2px solid var(--red-b); border-radius: 8px;
+      padding: 30px 38px; text-align: center;
+      box-shadow: 0 0 60px rgba(244,67,54,.2);
+      min-width: 520px; max-width: 600px;
+    }
+    .go-title { font-family:'Bebas Neue',sans-serif; font-size:3.2rem; letter-spacing:8px; color:var(--red-b); margin-bottom:4px; }
+    .go-sub   { font-size:0.62rem; letter-spacing:3px; color:#666; margin-bottom:18px; text-transform:uppercase; }
+    /* final champion */
+    .go-final { display:flex; align-items:center; gap:14px; background:rgba(200,0,0,0.08); border:1px solid rgba(200,0,0,0.2); border-radius:6px; padding:12px 16px; margin-bottom:18px; text-align:left; }
+    .go-final img { width:52px; height:52px; border-radius:50%; border:2px solid var(--red-b); object-fit:cover; object-position:center top; flex-shrink:0; }
+    .go-final-info { flex:1; }
+    .go-final-name { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:3px; color:#fff; }
+    .go-final-sub  { font-size:0.55rem; letter-spacing:2px; color:#e05555; text-transform:uppercase; margin-top:2px; }
+    /* stat pills */
+    .go-stat-row { display:flex; gap:10px; justify-content:center; margin-bottom:18px; }
+    .go-stat { background:rgba(255,255,255,0.05); border:1px solid #222; border-radius:4px; padding:8px 18px; }
+    .go-stat .gs-lbl { font-size:0.52rem; letter-spacing:2px; color:#555; text-transform:uppercase; }
+    .go-stat .gs-val { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:2px; color:#fff; line-height:1; margin-top:2px; }
+    /* top champions */
+    .go-top-label { font-size:0.55rem; letter-spacing:3px; color:#444; text-transform:uppercase; margin-bottom:10px; }
+    .go-top-row { display:flex; gap:12px; justify-content:center; margin-bottom:22px; }
+    .go-top-champ { display:flex; flex-direction:column; align-items:center; gap:5px; }
+    .go-top-champ img { width:46px; height:46px; border-radius:50%; object-fit:cover; object-position:center top; border:2px solid var(--gold-d); }
+    .go-top-champ .gtc-name { font-size:0.52rem; letter-spacing:1px; color:#aaa; text-transform:uppercase; max-width:60px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .go-top-champ .gtc-wins { font-family:'Bebas Neue',sans-serif; font-size:0.9rem; color:var(--yellow); }
+    /* rank rings */
+    .go-top-champ.rank-1 img { border-color:var(--yellow); box-shadow:0 0 10px rgba(240,192,48,.4); }
+    .go-top-champ.rank-2 img { border-color:#aaa; }
+    .go-top-champ.rank-3 img { border-color:#cd7f32; }
+    .btn-reset { background:linear-gradient(180deg,#7a1e1e,#4a0c0c); border:2px solid var(--red-b); color:#ffc0c0; padding:12px 32px; font-family:'Cinzel',serif; font-size:.9rem; letter-spacing:2px; font-weight:700; border-radius:4px; cursor:pointer; transition:.2s; text-transform:uppercase; }
+    .btn-reset:hover { box-shadow:0 0 14px rgba(244,67,54,.4); background:linear-gradient(180deg,#9a2a2a,#6a1a1a); }
+
+    /* ─── DEFEAT FLASH ───────────────────────────── */
+    #defeat-flash {
+      position:fixed; inset:0; z-index:90;
+      background:rgba(200,0,0,0);
+      pointer-events:none;
+      transition:background .1s;
+    }
+    #defeat-flash.flash { animation: flash-anim .5s ease-out forwards; }
+    @keyframes flash-anim {
+      0%   { background:rgba(200,0,0,0); }
+      15%  { background:rgba(200,0,0,0.35); }
+      100% { background:rgba(200,0,0,0); }
+    }
+
+    /* ─── ANIMATED RESULT VIDEO ─────────────────── */
+    #result-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: brightness(0.72);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
+    }
+    #result-video.loaded { opacity: 1; }
+
+    /* ─── WINS SIDEBAR ───────────────────────────── */
+    #wins-sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 245px;
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      background: rgba(0,0,0,0.80);
+      border-right: 1px solid rgba(200,170,110,0.22);
+      backdrop-filter: blur(10px);
+      pointer-events: all;
+      transform: translateX(0);
+      transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+    }
+    #wins-sidebar.collapsed { transform: translateX(-245px); }
+
+    /* Toggle tab sticking out on the right edge of the sidebar */
+    #sb-toggle {
+      position: absolute;
+      right: -30px; top: 50%;
+      transform: translateY(-50%);
+      width: 30px; height: 64px;
+      background: rgba(0,0,0,0.80);
+      border: 1px solid rgba(200,170,110,0.22);
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(10px);
+      color: var(--yellow);
+      font-size: 0.85rem;
+      transition: background 0.2s;
+      pointer-events: all;
+      user-select: none;
+    }
+    #sb-toggle:hover { background: rgba(30,20,0,0.90); }
+
+    #sb-title {
+      padding: 14px 12px 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 4px;
+      color: var(--yellow);
+      text-align: center;
+      border-bottom: 1px solid rgba(200,170,110,0.18);
+      flex-shrink: 0;
+    }
+    #sb-list {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: #332200 transparent;
+      padding: 4px 0;
+    }
+    .sb-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .sb-row img {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid rgba(200,170,110,0.35);
+      object-fit: cover; object-position: center top;
+      flex-shrink: 0;
+    }
+    .sb-name {
+      flex: 1; min-width: 0;
+      font-size: 0.60rem; letter-spacing: 1px;
+      color: #ccc; text-transform: uppercase;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-family: 'Cinzel', serif;
+    }
+    .sb-badge {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.72rem; letter-spacing: 1px;
+      color: #a8f0a8;
+      background: rgba(20,70,20,0.85);
+      border: 1px solid rgba(76,175,80,0.45);
+      padding: 2px 8px; border-radius: 10px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .sb-empty {
+      font-size: 0.52rem; letter-spacing: 1px;
+      color: #333; text-transform: uppercase;
+      text-align: center; padding: 24px 10px; line-height: 2.2;
+    }
+
+    /* ─── CHAMPION REVEAL BANNER (Genshin-style) ─── */
+    #champ-reveal-banner {
+      position: fixed;
+      left: 0; top: 58%;
+      transform: translateX(-110%) translateY(-50%);
+      z-index: 65;
+      display: flex; align-items: center; gap: 18px;
+      padding: 16px 52px 16px 20px;
+      background: linear-gradient(
+        90deg,
+        rgba(0,0,0,0.92) 0%,
+        rgba(10,8,5,0.88) 55%,
+        rgba(10,8,5,0.0) 100%
+      );
+      border-top:    1px solid rgba(200,170,80,0.18);
+      border-bottom: 1px solid rgba(200,170,80,0.18);
+      transition: transform 0.72s cubic-bezier(0.16,1,0.3,1);
+      pointer-events: none;
+      min-width: 300px;
+    }
+    #champ-reveal-banner.visible {
+      transform: translateX(0) translateY(-50%);
+    }
+    /* left accent bar (like Genshin's colour bar) */
+    #champ-reveal-banner::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--crb-color, #c8aa6e);
+      box-shadow: 0 0 14px var(--crb-color, #c8aa6e);
+    }
+    #crb-portrait-wrap {
+      position: relative; flex-shrink: 0;
+    }
+    #crb-portrait {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      object-fit: cover; object-position: center top;
+      border: 2.5px solid var(--crb-color, #c8aa6e);
+      box-shadow: 0 0 18px var(--crb-color, #c8aa6e);
+      display: block;
+    }
+    #crb-gem {
+      position: absolute; bottom: -3px; right: -3px;
+      width: 26px; height: 26px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.9));
+    }
+    #crb-info { display: flex; flex-direction: column; gap: 5px; }
+    #crb-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.5rem, 3.2vw, 2.2rem);
+      letter-spacing: 4px; color: #fff; line-height: 1;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+    }
+    #crb-skin-name {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.58rem, 1vw, 0.72rem);
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--crb-color, #c8aa6e);
+      opacity: 0.85;
+      line-height: 1;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+    #crb-stars { display: flex; gap: 2px; align-items: center; margin-top: 4px; flex-wrap: wrap; max-width: 180px; }
+    .crb-star {
+      font-size: 1.05rem; line-height: 1;
+      color: var(--crb-color, #c8aa6e);
+      filter: drop-shadow(0 0 5px var(--crb-color, #c8aa6e));
+    }
+    /* Ultimate (6★) — stars pulse with rarity glow */
+    .crb-star.glow {
+      animation: starPulse 1.4s ease-in-out infinite alternate;
+    }
+    @keyframes starPulse {
+      from { filter: drop-shadow(0 0 4px var(--crb-color, #ff8c42)) drop-shadow(0 0 8px var(--crb-color, #ff8c42)); }
+      to   { filter: drop-shadow(0 0 10px var(--crb-color, #ff8c42)) drop-shadow(0 0 22px var(--crb-color, #ff8c42)) brightness(1.4); }
+    }
+    /* Exalted / Transcendent — spark particles */
+    .star-spark {
+      position: absolute; width: 5px; height: 5px; border-radius: 50%;
+      pointer-events: none; z-index: 999;
+      animation: sparkFly 0.9s ease-out forwards;
+    }
+    @keyframes sparkFly {
+      0%   { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--sx), var(--sy)) scale(0); opacity: 0; }
+    }
+
+    /* ─── RIOT PROFILE PANEL ────────────────────── */
+    #riot-profile {
+      position: fixed; top: 14px; right: 14px; z-index: 20;
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(0,0,0,0.78);
+      border: 1px solid rgba(200,170,80,0.28);
+      border-radius: 6px; padding: 8px 14px 8px 10px;
+      backdrop-filter: blur(8px);
+      pointer-events: all;
+      min-width: 200px;
+      transition: opacity .3s;
+    }
+    #riot-profile.hidden { opacity: 0; pointer-events: none; }
+    #rp-icon-wrap { position: relative; flex-shrink: 0; }
+    #rp-icon {
+      width: 46px; height: 46px; border-radius: 4px;
+      border: 2px solid var(--rp-color, #c8aa6e);
+      object-fit: cover; display: block;
+    }
+    #rp-level {
+      position: absolute; bottom: -6px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.9); border: 1px solid var(--rp-color, #c8aa6e);
+      border-radius: 8px; padding: 1px 5px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.6rem; letter-spacing: 1px;
+      color: var(--rp-color, #c8aa6e);
+      white-space: nowrap;
+    }
+    #rp-info { flex: 1; min-width: 0; }
+    #rp-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.9rem; letter-spacing: 2px; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    #rp-rank {
+      font-size: 0.6rem; letter-spacing: 1.5px;
+      color: var(--rp-color, #c8aa6e); text-transform: uppercase;
+      margin-top: 3px;
+    }
+    #rp-lp {
+      font-size: 0.55rem; letter-spacing: 1px; color: #888;
+      text-transform: uppercase; margin-top: 2px;
+    }
+    #rp-gear {
+      background: transparent; border: none;
+      color: #555; font-size: 0.85rem;
+      cursor: pointer; padding: 4px; line-height: 1;
+      transition: color .2s; flex-shrink: 0;
+    }
+    #rp-gear:hover { color: #c8aa6e; }
+    #rp-connect-btn {
+      background: linear-gradient(180deg,#1a3a1a,#0a1f0a);
+      border: 1px solid #4caf50; color: #a8f0a8;
+      font-family: 'Cinzel', serif; font-size: 0.6rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 3px;
+      cursor: pointer; transition: .2s;
+    }
+    #rp-connect-btn:hover { background: linear-gradient(180deg,#254a25,#162f16); box-shadow: 0 0 10px rgba(76,175,80,.3); }
+
+    /* ─── RIOT SETTINGS OVERLAY ──────────────────── */
+    #riot-settings-ov {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.88);
+      display: none; align-items: center; justify-content: center;
+    }
+    #riot-settings-ov.on { display: flex; }
+    .rs-box {
+      background: linear-gradient(170deg,#090d14,#05050a);
+      border: 2px solid rgba(200,170,80,0.35);
+      border-radius: 8px; padding: 28px 36px;
+      min-width: 380px; max-width: 460px;
+      box-shadow: 0 0 60px rgba(0,0,0,.9);
+    }
+    .rs-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; letter-spacing: 5px; color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .rs-sub { font-size: 0.58rem; letter-spacing: 1.5px; color: #555; text-transform: uppercase; margin-bottom: 22px; }
+    .rs-label { font-size: 0.6rem; letter-spacing: 2px; color: #888; text-transform: uppercase; margin-bottom: 5px; margin-top: 14px; }
+    .rs-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #2a2a3a;
+      border-radius: 4px; padding: 9px 12px;
+      color: #ddd; font-family: 'Cinzel', serif;
+      font-size: 0.72rem; letter-spacing: 1px;
+      outline: none; transition: border-color .2s;
+    }
+    .rs-input:focus { border-color: var(--gold); }
+    .rs-row { display: flex; gap: 10px; }
+    .rs-select {
+      flex: 1; background: rgba(255,255,255,0.05);
+      border: 1px solid #2a2a3a; border-radius: 4px;
+      padding: 9px 10px; color: #ddd;
+      font-family: 'Cinzel', serif; font-size: 0.72rem;
+      outline: none; cursor: pointer;
+    }
+    .rs-select option { background: #0a0a14; }
+    .rs-btns { display: flex; gap: 10px; margin-top: 22px; }
+    .rs-save {
+      flex: 1; background: linear-gradient(180deg,#1a4a1a,#0a2a0a);
+      border: 2px solid #4caf50; color: #a8f0a8;
+      font-family: 'Cinzel', serif; font-size: 0.75rem;
+      letter-spacing: 2px; font-weight: 700;
+      padding: 11px; border-radius: 4px; cursor: pointer;
+      text-transform: uppercase; transition: .2s;
+    }
+    .rs-save:hover { background: linear-gradient(180deg,#254a25,#162f16); box-shadow: 0 0 14px rgba(76,175,80,.3); }
+    .rs-cancel {
+      background: transparent; border: 1px solid #333;
+      color: #555; font-family: 'Cinzel', serif;
+      font-size: 0.7rem; letter-spacing: 1px;
+      padding: 11px 20px; border-radius: 4px; cursor: pointer;
+      text-transform: uppercase; transition: .2s;
+    }
+    .rs-cancel:hover { border-color: #666; color: #999; }
+    .rs-disconnect {
+      background: transparent; border: 1px solid #5a1010;
+      color: #a05050; font-family: 'Cinzel', serif;
+      font-size: 0.6rem; letter-spacing: 1px;
+      padding: 6px 14px; border-radius: 3px; cursor: pointer;
+      text-transform: uppercase; transition: .2s; margin-top: 14px; width: 100%;
+    }
+    .rs-disconnect:hover { border-color: #ff4444; color: #ff8888; }
+    .rs-status { font-size: 0.6rem; letter-spacing: 1px; margin-top: 10px; text-align: center; min-height: 16px; }
+    .rs-status.ok  { color: #4caf50; }
+    .rs-status.err { color: #ff5555; }
+    .rs-status.loading { color: #888; }
+
+    /* ─── MASTERY BADGE ON WHEEL ─────────────────── */
+    /* drawn via canvas — no extra CSS needed */
+
+    /* mastery row in Genshin banner */
+    #crb-mastery {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.55rem, 0.9vw, 0.65rem);
+      letter-spacing: 2px; color: #888;
+      text-transform: uppercase; margin-top: 1px;
+      display: none;
+    }
+
+    /* ─── MATCH HISTORY ON RESULT SCREEN ────────── */
+    #r-match-history {
+      display: none; flex-direction: column;
+      align-items: center; gap: 8px;
+      margin-bottom: 3vh;
+    }
+    .mh-label {
+      font-size: 0.55rem; letter-spacing: 3px;
+      color: rgba(255,255,255,0.35); text-transform: uppercase;
+    }
+    .mh-dots { display: flex; gap: 7px; align-items: center; }
+    .mh-dot {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.9rem; letter-spacing: 1px;
+      border: 2px solid transparent;
+    }
+    .mh-dot.win  { background:rgba(76,175,80,.18); border-color:#4caf50; color:#a8f0a8; box-shadow:0 0 10px rgba(76,175,80,.3); }
+    .mh-dot.loss { background:rgba(244,67,54,.18); border-color:#f44336; color:#f0a8a8; box-shadow:0 0 10px rgba(244,67,54,.3); }
+    .mh-no-games { font-size:0.55rem; letter-spacing:2px; color:#444; text-transform:uppercase; }
+
+    /* ─── LP DELTA IN PROFILE ────────────────────── */
+    #rp-delta {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.65rem; letter-spacing: 1.5px;
+      margin-top: 1px; display: none;
+    }
+    #rp-delta.pos { color: #4caf50; }
+    #rp-delta.neg { color: #f44336; }
+    #rp-delta.zero { color: #555; }
+
+    /* ─── MASTERY MILESTONE BANNER ───────────────── */
+    #mastery-milestone {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      z-index: 200; pointer-events: none;
+      background: rgba(0,0,0,0.88);
+      border: 1px solid var(--mm-color, #f0c030);
+      border-radius: 6px; padding: 10px 22px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 0 24px var(--mm-color, #f0c030);
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s;
+      opacity: 0;
+      white-space: nowrap;
+    }
+    #mastery-milestone.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    #mm-icon { font-size: 1.2rem; line-height:1; }
+    #mm-text { font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:1.5px; color:#ddd; }
+    #mm-pts  { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:2px; color:var(--mm-color,#f0c030); }
+
+    /* ─── TOAST ──────────────────────────────────── */
+    #toast {
+      position:fixed; top:16px; left:50%; transform:translateX(-50%);
+      background:rgba(0,0,0,0.88); border:1px solid #333;
+      color:#ccc; padding:8px 20px;
+      border-radius:3px; font-size:0.65rem; letter-spacing:2px;
+      opacity:0; transition:opacity .3s; z-index:300;
+      text-transform:uppercase; white-space:nowrap; pointer-events:none;
+    }
+    #toast.show { opacity:1; }
+
+    /* ── HIR SELECTION LABEL ──────────────────────────────────── */
+    #hir-selection {
+      position: absolute;
+      top: 28px; left: 32px; z-index: 20;
+      padding: 9px 20px 10px;
+      background: rgba(4, 7, 18, 0.80);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(160, 210, 255, 0.18);
+      border-radius: 3px;
+      box-shadow:
+        0 0 18px rgba(100, 180, 255, 0.12),
+        0 2px 24px rgba(0, 0, 0, 0.55),
+        inset 0 0 10px rgba(120, 200, 255, 0.05);
+      opacity: 0;
+      transform: translateY(-12px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      pointer-events: none;
+      user-select: none;
+    }
+    #hir-selection.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #hir-selection span {
+      display: block;
+      font-family: 'Cinzel Decorative', 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg,
+        #ff88cc, #ffaa55, #ffee44, #66ffcc, #44ccff, #aa66ff, #ff55bb,
+        #ff88cc, #ffaa55, #ffee44, #66ffcc, #44ccff, #aa66ff, #ff55bb
+      );
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: hirPrismatic 4s linear infinite;
+      filter: drop-shadow(0 0 8px rgba(160, 220, 255, 0.65));
+    }
+    @keyframes hirPrismatic {
+      0%   { background-position: 0% center; }
+      100% { background-position: 250% center; }
+    }
+    /* ─── ENTRANCE GATE (start + how-to + audio unlock) ─ */
+    #enter-gate{
+      position:fixed; inset:0; z-index:1200;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:24px; text-align:center; padding:28px 24px;
+      background:radial-gradient(ellipse at center, rgba(12,8,3,.9) 0%, rgba(0,0,0,.97) 72%);
+      -webkit-backdrop-filter:blur(7px); backdrop-filter:blur(7px);
+      transition:opacity .7s ease, visibility .7s ease;
+      overflow-y:auto;
+    }
+    #enter-gate.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+    #eg-kicker{ font-family:'Bebas Neue',sans-serif; letter-spacing:7px; font-size:.82rem; color:var(--cyan); text-transform:uppercase; opacity:.85; }
+    #eg-title{ font-family:'Cinzel Decorative',serif; font-weight:900; font-size:clamp(2rem,6vw,4.2rem); line-height:1.05; color:#fff; text-shadow:0 0 40px rgba(200,30,30,.5), 0 2px 0 #000; }
+    #eg-title small{ display:block; font-family:'Cinzel',serif; font-weight:700; font-size:clamp(.7rem,1.5vw,1rem); letter-spacing:8px; color:var(--gold); margin-top:12px; text-shadow:none; }
+    #eg-how{ max-width:620px; color:#cdb78e; font-family:'Cinzel',serif; font-size:clamp(.78rem,1.4vw,.95rem); line-height:1.7; }
+    #eg-how b{ color:#f0e6d3; }
+    #eg-steps{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; max-width:720px; }
+    .eg-step{ flex:1 1 160px; min-width:150px; background:rgba(22,17,10,.6); border:1px solid #c8aa6e33; border-radius:10px; padding:14px 12px; }
+    .eg-step .n{ font-family:'Bebas Neue',sans-serif; font-size:1.3rem; color:var(--gold); letter-spacing:2px; }
+    .eg-step .t{ font-family:'Cinzel',serif; font-size:.72rem; color:#bda981; margin-top:5px; line-height:1.55; }
+    #eg-lang-wrap{ display:flex; flex-direction:column; align-items:center; gap:9px; }
+    #eg-lang-label{ font-family:'Cinzel',serif; font-size:.62rem; letter-spacing:4px; color:#8a784f; text-transform:uppercase; }
+    #eg-lang{ display:flex; border:1px solid #c8aa6e44; border-radius:999px; overflow:hidden; }
+    #eg-lang button{ cursor:pointer; background:transparent; border:none; color:#9a875f; font-family:'Bebas Neue',sans-serif; letter-spacing:2px; font-size:.95rem; padding:9px 26px; transition:all .2s; }
+    #eg-lang button.on{ background:var(--cyan); color:#04222a; }
+    #eg-enter{ margin-top:4px; cursor:pointer; border:none; font-family:'Bebas Neue',sans-serif; letter-spacing:4px; font-size:1.35rem; color:#1a1206; padding:15px 56px; border-radius:8px; background:linear-gradient(180deg,#f7efdc,#c8aa6e 55%,#9c7530); box-shadow:0 0 30px rgba(200,170,110,.45), inset 0 1px 0 rgba(255,255,255,.5); text-transform:uppercase; transition:transform .15s ease, box-shadow .3s ease; }
+    #eg-enter:hover{ transform:translateY(-2px) scale(1.03); box-shadow:0 0 48px rgba(200,170,110,.8), inset 0 1px 0 rgba(255,255,255,.5); }
+
+    /* persistent voice-language toggle (top-left) */
+    #lang-toggle{ position:fixed; top:14px; left:14px; z-index:40; display:flex; align-items:center; gap:4px; background:rgba(8,6,3,.6); border:1px solid #c8aa6e33; border-radius:999px; padding:3px; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+    #lang-toggle button{ cursor:pointer; background:transparent; border:none; color:#9a875f; font-family:'Bebas Neue',sans-serif; letter-spacing:1px; font-size:.78rem; padding:4px 11px; border-radius:999px; transition:all .2s; }
+    #lang-toggle button.on{ background:var(--cyan); color:#04222a; }
+
+    /* Riot settings extra notes */
+    .rs-optional{ font-family:'Bebas Neue',sans-serif; font-size:.5rem; letter-spacing:2px; color:#04222a; background:var(--cyan); padding:2px 7px; border-radius:999px; vertical-align:middle; }
+    .rs-note{ font-size:.5rem; line-height:1.65; letter-spacing:.5px; color:#8a7a55; margin:-2px 0 8px; font-family:'Cinzel',serif; }
+    .rs-note a{ color:var(--cyan); }
+
+    /* ─── RESPONSIVE / MOBILE ─────────────────────── */
+    @media (max-width: 820px){
+      #title{ font-size:clamp(1.05rem,4.6vw,1.7rem); letter-spacing:3px; margin-top:8px; padding:0 70px; }
+      #riot-profile{ top:8px; right:8px; min-width:0; padding:6px 9px; transform:scale(.84); transform-origin:top right; }
+      #lang-toggle{ top:8px; left:8px; transform:scale(.92); transform-origin:top left; }
+      #hud-bottom{ flex-direction:column; align-items:stretch; gap:8px; padding:0 10px 10px; }
+      #hud-left, #hud-right{ width:100%; justify-content:center; flex-wrap:wrap; gap:8px; }
+      #hud-right{ order:-1; }
+      .hud-box{ padding:6px 10px; }
+      .bl-open-btn, #undo-bl-btn, #lg-open-btn{ font-size:.58rem; padding:7px 9px; }
+      #r-name{ font-size:clamp(1.6rem,8vw,2.6rem); }
+      #r-btns{ flex-wrap:wrap; justify-content:center; }
+      #r-btns button{ flex:1 1 120px; }
+      .bl-box, .wh-box, .z-box, .go-box, .rs-box{ width:94vw !important; max-width:94vw !important; }
+      #wins-sidebar{ display:none; }
+      #dev-toggle{ bottom:8px; right:8px; }
+    }
+    @media (max-height: 560px){
+      #eg-how, #eg-steps{ display:none; }
+      #enter-gate{ gap:16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── BACKGROUND VIDEO ─────────────────────────────
+     Replace "YOUR_BACKGROUND_FILE.mp4" with your actual file name.
+     The file must be in the same folder as this HTML.
+     You can also use .webm, .gif, or swap <video> for <img>.
+──────────────────────────────────────────────────── -->
+<video id="bg-video" autoplay muted loop playsinline>
+  <source src="background.mp4" type="video/mp4">
+</video>
+<div id="bg-vignette"></div>
+<div id="defeat-flash"></div>
+
+<!-- ── RIOT PROFILE PANEL ────────────────────────── -->
+<div id="riot-profile">
+  <!-- shown when NOT connected -->
+  <button id="rp-connect-btn" onclick="openRiotSettings()">⚙ Connect Account</button>
+  <!-- shown when connected (hidden by default) -->
+  <div id="rp-connected" style="display:none; align-items:center; gap:10px; flex:1;">
+    <div id="rp-icon-wrap">
+      <img id="rp-icon" src="" alt="">
+      <div id="rp-level"></div>
+    </div>
+    <div id="rp-info">
+      <div id="rp-name"></div>
+      <div id="rp-rank"></div>
+      <div id="rp-lp"></div>
+      <div id="rp-delta"></div>
+    </div>
+    <button id="rp-gear" onclick="openRiotSettings()" title="Account Settings">⚙</button>
+  </div>
+</div>
+
+<!-- ── RIOT SETTINGS OVERLAY ─────────────────────── -->
+<div id="riot-settings-ov">
+  <div class="rs-box">
+    <div class="rs-title">Connect Account <span class="rs-optional">Optional</span></div>
+    <div class="rs-sub">Power-user feature — bring your own Riot dev key. Your data stays in this browser and is sent only to Riot's official API.</div>
+    <div class="rs-label">Riot API Key</div>
+    <input class="rs-input" id="rs-key" type="password" placeholder="RGAPI-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+    <div class="rs-note">Get a key at <a href="https://developer.riotgames.com" target="_blank" rel="noopener">developer.riotgames.com</a>. Personal dev keys expire every 24h, and browsers may block direct calls (CORS) — a small proxy can be required. The wheel works fully without connecting.</div>
+    <div class="rs-label">Riot ID</div>
+    <div class="rs-row">
+      <input class="rs-input" id="rs-name" placeholder="Game Name" style="flex:2;">
+      <input class="rs-input" id="rs-tag"  placeholder="TAG" style="flex:1;">
+    </div>
+    <div class="rs-label">Region</div>
+    <select class="rs-select" id="rs-region">
+      <option value="tr1|europe">TR — Turkey</option>
+      <option value="euw1|europe">EUW — Europe West</option>
+      <option value="eun1|europe">EUNE — Europe Nordic</option>
+      <option value="na1|americas">NA — North America</option>
+      <option value="kr|asia">KR — Korea</option>
+      <option value="jp1|asia">JP — Japan</option>
+      <option value="br1|americas">BR — Brazil</option>
+      <option value="la1|americas">LAN — Latin America N</option>
+      <option value="la2|americas">LAS — Latin America S</option>
+      <option value="oc1|sea">OCE — Oceania</option>
+      <option value="ru|europe">RU — Russia</option>
+    </select>
+    <div class="rs-btns">
+      <button class="rs-save" onclick="saveRiotSettings()">Connect</button>
+      <button class="rs-cancel" onclick="closeRiotSettings()">Cancel</button>
+    </div>
+    <div class="rs-status" id="rs-status"></div>
+    <button class="rs-disconnect" id="rs-disconnect" onclick="disconnectRiot()" style="display:none;">Disconnect Account</button>
+  </div>
+</div>
+
+<!-- ── LOADING ─────────────────────────────────── -->
+<div id="loading">
+  <h2>BLACKLIST CHALLENGE</h2>
+  <p>Summoning all champions…</p>
+  <div class="bar-wrap"><div class="bar-fill" id="bar"></div></div>
+  <p id="load-txt" style="color:#444">Connecting to Rift Data...</p>
+</div>
+
+<!-- ── ENTRANCE GATE (start screen + how-to + audio unlock) ── -->
+<div id="enter-gate">
+  <div id="eg-kicker">A League of Legends Champion Roulette</div>
+  <div id="eg-title">Void Lord's<small>Blacklist Challenge</small></div>
+  <div id="eg-how">Spin the wheel to be assigned a champion — revealed in their <b>rarest skin</b>. Queue that champion, play your game, then log the result. <b>Win</b> to grow your streak; <b>lose</b> and they're <b>blacklisted</b> from the wheel for good. Survive as long as you can.</div>
+  <div id="eg-steps">
+    <div class="eg-step"><div class="n">1 · SPIN</div><div class="t">Click the wheel to draw a champion at random.</div></div>
+    <div class="eg-step"><div class="n">2 · PLAY</div><div class="t">Queue them, then mark Victory or Defeat.</div></div>
+    <div class="eg-step"><div class="n">3 · SURVIVE</div><div class="t">Losses blacklist the champ. Streaks summon Zilean for a revival.</div></div>
+  </div>
+  <div id="eg-lang-wrap">
+    <span id="eg-lang-label">Champion Voice Lines</span>
+    <div id="eg-lang">
+      <button data-lang="default" onclick="setVoLocale('default')">English</button>
+      <button data-lang="tr_tr" onclick="setVoLocale('tr_tr')">Türkçe</button>
+    </div>
+  </div>
+  <button id="eg-enter" onclick="enterRift()">Enter the Rift</button>
+  <div id="eg-legal" style="max-width:560px;margin-top:6px;font-family:'Cinzel',serif;font-size:.5rem;line-height:1.6;letter-spacing:.5px;color:#6b5d40;">Unofficial fan project. Not affiliated with or endorsed by Riot Games. League of Legends and all related assets are property of Riot Games, Inc.</div>
+</div>
+
+<!-- persistent voice-language toggle -->
+<div id="lang-toggle" title="Champion voice line language">
+  <button data-lang="default" onclick="setVoLocale('default')">EN</button>
+  <button data-lang="tr_tr" onclick="setVoLocale('tr_tr')">TR</button>
+</div>
+
+<!-- ── ALL UI ───────────────────────────────────── -->
+<div id="ui">
+
+  <!-- Title -->
+  <div id="title">⚔ Void Lord's Blacklist Challenge ⚔</div>
+  <div id="app-version">v2.7</div>
+
+  <!-- Wheel -->
+  <div id="wheel-wrap">
+    <canvas id="wheel"></canvas>
+  </div>
+
+  <!-- Bottom HUD -->
+  <div id="hud-bottom">
+
+    <!-- Left: streak / revival / remaining -->
+    <div id="hud-left">
+      <div class="hud-box hud-yellow">
+        <span class="lbl">Win Streak</span>
+        <span class="val" id="s-streak">0</span>
+      </div>
+      <div class="hud-box hud-cyan">
+        <span class="lbl">Revival Points</span>
+        <span class="val" id="s-revival">0</span>
+      </div>
+      <div class="hud-box hud-white">
+        <span class="lbl">Remaining</span>
+        <span class="val" id="s-remaining">—</span>
+      </div>
+    </div>
+
+    <!-- Right: W/L / blacklist button -->
+    <div id="hud-right">
+      <div class="hud-box hud-blue" style="justify-content:center; gap:16px;">
+        <span class="val" id="s-w" style="color:#88ccff;">W: 0</span>
+        <span style="color:#333; font-size:1rem;">|</span>
+        <span class="val" id="s-l" style="color:#ff8888;">L: 0</span>
+      </div>
+      <button class="bl-open-btn" onclick="openBlacklist()">
+        ☠ Blacklist &nbsp;<span id="bl-count">0</span>
+      </button>
+      <button id="undo-bl-btn" onclick="undoBlacklist()">↩ Undo Blacklist</button>
+      <button id="lg-open-btn" onclick="openLiveGame()">🎮 Live Game</button>
+      <button class="bl-open-btn" onclick="openWinsHistory()" style="border-color:#c8aa6e55; color:#c8aa6e;">
+        🏆 Champions Won &nbsp;<span id="wh-count">0</span>
+      </button>
+    </div>
+
+  </div><!-- /hud-bottom -->
+</div><!-- /ui -->
+
+<!-- ── FULL-SCREEN RESULT ────────────────────────── -->
+<div id="result-screen">
+  <div id="hir-selection"><span>Hir Selection</span></div>
+  <div id="result-bg">
+    <img id="result-splash" src="" alt="">
+    <video id="result-video" autoplay loop muted playsinline></video>
+    <div id="transcendent-shimmer"></div>
+    <div id="result-gradient"></div>
+  </div>
+  <div id="result-content">
+    <div id="r-label">Selected Champion</div>
+    <div id="r-name"></div>
+    <div id="r-wins"></div>
+    <div id="r-match-history">
+      <div class="mh-label"></div>
+      <div class="mh-dots"></div>
+    </div>
+    <div id="r-btns">
+      <button class="btn-win"    onclick="recordResult('win')">Victory</button>
+      <button class="btn-lose"   onclick="recordResult('lose')">Defeat</button>
+      <button class="btn-afk"    onclick="recordAFK()">AFK / No Result</button>
+      <button class="btn-respin" onclick="doRespin()">Spin Again</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ZILEAN MODAL ─────────────────────────────── -->
+<div class="overlay" id="zilean-ov">
+  <div class="z-box">
+    <div class="z-img-wrap"><img id="z-img" src="" alt="Zilean"></div>
+    <div class="z-title">⏳ Zilean Appears!</div>
+    <div class="z-streak" id="z-streak-txt"></div>
+    <div class="z-text">
+      The Chronokeeper has witnessed your streak.<br>
+      He offers you a Revival Point — save a blacklisted<br>
+      champion and return them to the wheel!
+    </div>
+    <div class="z-btns">
+      <button class="btn-take"  onclick="handleZilean(true)">Take It!</button>
+      <button class="btn-leave" onclick="handleZilean(false)">Leave It</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LIVE GAME OVERLAY ─────────────────────────── -->
+<div id="lg-ov">
+  <div id="lg-header">
+    <div>
+      <div id="lg-title">🎮 LIVE GAME</div>
+      <div id="lg-status">Checking…</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button id="lg-refresh" onclick="refreshLiveGame()">↻ Refresh</button>
+      <button id="lg-close"   onclick="closeLiveGame()">✕ Close</button>
+    </div>
+  </div>
+  <div id="lg-body" class="lg-loading">Checking for active game…</div>
+</div>
+
+<!-- ── BLACKLIST PANEL ──────────────────────────── -->
+<div class="overlay" id="bl-ov">
+  <div class="bl-box">
+    <div class="bl-head">
+      <span>☠ Blacklist</span>
+      <button class="bl-close" onclick="document.getElementById('bl-ov').classList.remove('on')">Close</button>
+    </div>
+    <div class="bl-scroll" id="bl-scroll">
+      <div class="bl-empty">No champions blacklisted yet.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── WINS HISTORY PANEL ───────────────────────── -->
+<div class="overlay" id="wh-ov">
+  <div class="wh-box">
+    <div class="wh-head">
+      <span>🏆 Champions Won</span>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span class="wh-sub" id="wh-sub">sorted by wins</span>
+        <button class="bl-close" onclick="document.getElementById('wh-ov').classList.remove('on')">Close</button>
+      </div>
+    </div>
+    <div class="wh-scroll" id="wh-scroll">
+      <div class="wh-empty">No wins recorded yet.<br>Spin the wheel and claim victory!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CHAMPION REVEAL BANNER ───────────────────── -->
+<div id="champ-reveal-banner">
+  <div id="crb-portrait-wrap">
+    <img id="crb-portrait" src="" alt="">
+    <img id="crb-gem" src="" alt="">
+  </div>
+  <div id="crb-info">
+    <div id="crb-name"></div>
+    <div id="crb-skin-name"></div>
+    <div id="crb-mastery"></div>
+    <div id="crb-stars"></div>
+  </div>
+</div>
+
+<!-- ── MASTERY MILESTONE BANNER ──────────────────── -->
+<div id="mastery-milestone">
+  <span id="mm-icon">🏆</span>
+  <span id="mm-text"></span>
+  <span id="mm-pts"></span>
+</div>
+
+<!-- ── RARITY FLASH ───────────────────────────────── -->
+<div id="rarity-flash">
+  <img id="rarity-flash-icon" src="" alt="">
+  <div id="rarity-flash-label"></div>
+</div>
+
+<!-- ── STREAK CINEMATIC ──────────────────────────── -->
+<div id="streak-cinematic">
+  <div id="sc-bg"></div>
+  <div id="sc-num"></div>
+  <div id="sc-label"></div>
+  <div id="sc-sub">WIN STREAK</div>
+</div>
+
+<!-- ── GAME OVER ─────────────────────────────────── -->
+<div class="overlay" id="go-ov">
+  <div class="go-box">
+    <div class="go-title">DEFEAT</div>
+    <div class="go-sub">All champions have been blacklisted.</div>
+    <!-- final champion that ended the run -->
+    <div class="go-final" id="go-final-row">
+      <img id="go-final-img" src="" alt="">
+      <div class="go-final-info">
+        <div class="go-final-name" id="go-final-name">—</div>
+        <div class="go-final-sub">Final Blacklisted Champion</div>
+      </div>
+    </div>
+    <!-- stat pills -->
+    <div class="go-stat-row">
+      <div class="go-stat">
+        <div class="gs-lbl">Total Wins</div>
+        <div class="gs-val" id="go-sw">0</div>
+      </div>
+      <div class="go-stat">
+        <div class="gs-lbl">Total Losses</div>
+        <div class="gs-val" id="go-sl">0</div>
+      </div>
+      <div class="go-stat">
+        <div class="gs-lbl">Best Streak</div>
+        <div class="gs-val" id="go-ss">0</div>
+      </div>
+    </div>
+    <!-- top champions -->
+    <div class="go-top-label">TOP CHAMPIONS THIS RUN</div>
+    <div class="go-top-row" id="go-top-row"></div>
+    <button class="btn-reset" onclick="resetGame()">Play Again</button>
+  </div>
+</div>
+
+<!-- ── WINS SIDEBAR ──────────────────────────────── -->
+<div id="wins-sidebar">
+  <button id="sb-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">❮</button>
+  <div id="sb-tabs">
+    <button class="sb-tab-btn active" id="sb-tab-victories" onclick="switchSidebarTab('victories')">🏆 Victories</button>
+    <button class="sb-tab-btn"        id="sb-tab-log"       onclick="switchSidebarTab('log')">📋 Session Log</button>
+  </div>
+  <div id="sb-list"><div class="sb-empty">No wins yet.<br>Spin the wheel!</div></div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────── -->
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────────
+let champions      = [];
+let version        = '14.24.1';
+let voLocale       = 'default';   // VO language: 'default' = English (en_US), 'tr_tr' = Turkish
+let spinning       = false;
+let selected       = null;
+let highlighted    = null;
+let winStreak      = 0;
+let totalWins      = 0;
+let totalLosses    = 0;
+let revivalPts     = 0;
+let angle          = 0;
+let bestStreak     = 0;       // all-time best streak this run
+let lastBlacklisted = null;   // last champion to be blacklisted (for game over)
+let undoStack       = null;   // { ch, lossCount } — last blacklist action for undo
+let sessionLog      = [];     // [{ ch, outcome:'win'|'lose', time:Date }] this session
+let sidebarTab      = 'victories'; // current sidebar tab
+// ── Shuffle-bag for fair random spin (prevents same champ appearing too often) ──
+let spinBag         = [];     // remaining champions not yet spun this cycle
+let lastSpunId      = null;   // id of last spun champion (for anti-repeat)
+
+// ─────────────────────────────────────────────────────
+//  PERSISTENCE  (localStorage)
+// ─────────────────────────────────────────────────────
+const SAVE_KEY = 'voidlord_blacklist_v1';
+
+function saveState() {
+  try {
+    const data = {
+      winStreak, totalWins, totalLosses, revivalPts, angle, bestStreak,
+      champions: champions.map(c => ({
+        id:          c.id,
+        wins:        c.wins,
+        blacklisted: c.blacklisted
+      }))
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch(e) { console.warn('Save failed:', e); }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function applyState(saved) {
+  if (!saved) return;
+  winStreak   = saved.winStreak   ?? 0;
+  totalWins   = saved.totalWins   ?? 0;
+  totalLosses = saved.totalLosses ?? 0;
+  revivalPts  = saved.revivalPts  ?? 0;
+  angle       = saved.angle       ?? 0;
+  bestStreak  = saved.bestStreak  ?? 0;
+  if (Array.isArray(saved.champions)) {
+    saved.champions.forEach(sc => {
+      const ch = champions.find(c => c.id === sc.id);
+      if (ch) { ch.wins = sc.wins ?? 0; ch.blacklisted = sc.blacklisted ?? false; }
+    });
+  }
+}
+
+// ─────────────────────────────────────────────────────
+//  CANVAS SETUP  (size adapts to window)
+// ─────────────────────────────────────────────────────
+const CV  = document.getElementById('wheel');
+const ctx = CV.getContext('2d');
+
+function sizeCanvas() {
+  const avail = Math.min(
+    window.innerHeight - 90,    // leave room for title + hud
+    window.innerWidth  - 40,
+    950
+  );
+  CV.width  = avail;
+  CV.height = avail;
+}
+sizeCanvas();
+window.addEventListener('resize', () => { sizeCanvas(); drawWheel(); });
+
+function cx() { return CV.width  / 2; }
+function cy() { return CV.height / 2; }
+function R()  { return CV.width  / 2 - 8; }
+const IR = 66; // inner button radius
+
+// ─────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────
+async function init() {
+  try {
+    setLoad(8, 'Fetching patch version…');
+    const vRes  = await fetch('https://ddragon.leagueoflegends.com/api/versions.json');
+    const vList = await vRes.json();
+    version = vList[0];
+
+    setLoad(25, `Loading champion roster (${version})…`);
+    const cRes  = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`);
+    const cData = await cRes.json();
+
+    champions = Object.values(cData.data)
+      .sort((a,b) => a.name.localeCompare(b.name))
+      .map(c => ({ id:c.id, name:c.name, wins:0, blacklisted:false, img:null }));
+
+    // Step A — championFull.json: all skin nums + champion numeric keys
+    // Step B — Community Dragon skins.json: rarity data + animated video URLs
+    // Both chained so champKeyMap is ready before the CD fetch runs.
+    const fullSkinPromise = fetch(
+      `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/championFull.json`
+    ).then(r => r.json()).then(data => {
+      Object.values(data.data).forEach(c => {
+        skinCache[c.id]   = c.skins.map(s => s.num);
+        champKeyMap[c.id] = parseInt(c.key, 10);
+      });
+      // Chain Community Dragon for rarity + animated splash data
+      return fetch(
+        'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/skins.json'
+      ).then(r => r.json()).then(cdData => {
+        // Priority order: Transcendent > Exalted > Ultimate > Legendary > Mythic > Epic
+        const RARITY = {
+          kTranscendent:8, kExalted:7, kUltimate:6,
+          kLegendary:5, kMythic:4, kEpic:3,
+          kRare:2, kUncommon:1, kNoRarity:0, '':0
+        };
+        const CDN    = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/';
+        // Build reverse map: numericKey → champion id string
+        const keyToId = {};
+        Object.entries(champKeyMap).forEach(([id, key]) => { keyToId[key] = id; });
+        const bestRank      = {}; // ch.id → best rarity rank found
+        const bestAnimRank  = {}; // ch.id → rarity of the animated skin stored
+        Object.values(cdData).forEach(skin => {
+          if (skin.isBase) return;
+          const champKey = Math.floor(skin.id / 1000);
+          const skinNum  = skin.id % 1000;
+          const champId  = keyToId[champKey];
+          if (!champId) return;
+          const rank = RARITY[skin.rarity] ?? 0;
+
+          // HD uncentered splash (1920×1080 quality) — track per skin
+          const rawSplash = skin.uncenteredSplashPath || skin.splashPath || '';
+          const hdUrl = rawSplash
+            ? CDN + rawSplash.replace(/^\/lol-game-data\/assets\//i, '').toLowerCase()
+            : null;
+
+          // Highest-rarity static skin
+          if (!(champId in bestRank) || rank > bestRank[champId]) {
+            bestRank[champId]            = rank;
+            preferredSkin[champId]       = skinNum;
+            preferredSkinRarity[champId] = rank;
+            preferredSkinName[champId]   = skin.name || '';
+            if (hdUrl) hdSplash[champId] = hdUrl;
+          }
+
+          // Animated splash video — prefer uncentered (collectionSplashVideoPath) for
+          // better full-screen fill; fall back to centered (splashVideoPath).
+          // Transcendent skins currently have no video in CDragon → handled separately.
+          const vidPath = skin.collectionSplashVideoPath || skin.splashVideoPath || null;
+          if (vidPath && (!(champId in bestAnimRank) || rank > bestAnimRank[champId])) {
+            bestAnimRank[champId]   = rank;
+            animatedSplash[champId] = CDN + vidPath.replace('/lol-game-data/assets/', '').toLowerCase();
+          }
+
+          // If this skin matches a FORCED override, store its splash + video
+          if (FORCED_SKINS[champId] === skinNum) {
+            if (hdUrl) hdSplashForced[champId] = hdUrl;
+          }
+        });
+
+        // Apply forced skin overrides AFTER all skins processed
+        Object.entries(FORCED_SKINS).forEach(([champId, skinNum]) => {
+          preferredSkin[champId] = skinNum;
+          // Forced skin rarity / name — look up from cdData by numeric ID
+          const numericKey = champKeyMap[champId];
+          if (numericKey === undefined) return;
+          const skinId  = numericKey * 1000 + skinNum;
+          const cdSkin  = cdData[String(skinId)];
+          if (cdSkin) {
+            const rank = RARITY[cdSkin.rarity] ?? 0;
+            preferredSkinRarity[champId] = rank;
+            preferredSkinName[champId]   = cdSkin.name || '';
+            // Override animated splash if this forced skin has one
+            // Use uncentered video for forced skin if available
+            const forcedVid = cdSkin.collectionSplashVideoPath || cdSkin.splashVideoPath;
+            if (forcedVid) {
+              animatedSplash[champId] = CDN + forcedVid.replace('/lol-game-data/assets/', '').toLowerCase();
+            }
+          }
+        });
+
+        // Apply Transcendent skin overrides — use local MP4 video if present, else shimmer fallback
+        Object.entries(TRANSCENDENT_SKINS).forEach(([champId, info]) => {
+          preferredSkin[champId]       = info.skinNum;
+          preferredSkinRarity[champId] = 8; // kTranscendent
+          preferredSkinName[champId]   = info.name;
+          hdSplash[champId]            = info.splash;
+          hdSplashForced[champId]      = info.splash;
+          if (info.video) {
+            // Local MP4 file (relative path — place next to the HTML file)
+            animatedSplash[champId] = info.video;
+          } else {
+            // No video — shimmer CSS effect will activate instead
+            delete animatedSplash[champId];
+          }
+        });
+
+      }).catch(() => {}); // CD data non-critical
+    }).catch(() => {}); // non-critical — lazy fetchSkins() still works as fallback
+
+    setLoad(40, `Loading ${champions.length} portraits…`);
+
+    let done = 0;
+    const total = champions.length;
+    await Promise.all([
+      Promise.all(champions.map(ch => new Promise(res => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = img.onerror = () => {
+          if (img.complete && img.naturalWidth) ch.img = img;
+          done++;
+          setLoad(40 + Math.round(done/total*55), `Loading portraits… ${done}/${total}`);
+          if (done % 30 === 0 || done === total) drawWheel();
+          res();
+        };
+        img.src = `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${ch.id}.png`;
+      }))),
+      fullSkinPromise  // wait for both portraits AND full skin data
+    ]);
+
+    // Restore saved state
+    applyState(loadState());
+
+    // Set Zilean image
+    const zil = champions.find(c => c.id === 'Zilean');
+    if (zil && zil.img) document.getElementById('z-img').src = zil.img.src;
+
+    setLoad(100, 'Ready!');
+    drawWheel();
+    updateStats();
+    setTimeout(() => document.getElementById('loading').style.display='none', 400);
+
+  } catch(e) {
+    document.getElementById('load-txt').textContent = 'Error loading data. Please refresh.';
+    console.error(e);
+  }
+}
+function setLoad(p, t) {
+  document.getElementById('bar').style.width = p+'%';
+  document.getElementById('load-txt').textContent = t;
+}
+
+// ─────────────────────────────────────────────────────
+//  DRAW WHEEL
+// ─────────────────────────────────────────────────────
+function drawWheel() {
+  const W = CV.width, H = CV.height;
+  const CX = cx(), CY = cy(), RAD = R();
+  const active = champions.filter(c => !c.blacklisted);
+  ctx.clearRect(0,0,W,H);
+
+  if (active.length === 0) {
+    ctx.fillStyle = '#0a0a0a';
+    ctx.beginPath(); ctx.arc(CX,CY,RAD,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 16px Cinzel,Georgia';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('ALL BLACKLISTED', CX, CY);
+    return;
+  }
+
+  const n   = active.length;
+  const seg = (2*Math.PI) / n;
+
+  // ── segments ──
+  for (let i = 0; i < n; i++) {
+    const sa  = angle + i*seg - Math.PI/2;
+    const ea  = sa + seg;
+    const ma  = sa + seg/2;
+    const isHL = highlighted && active[i].id === highlighted.id;
+
+    // segment fill
+    ctx.beginPath();
+    ctx.moveTo(CX,CY);
+    ctx.arc(CX, CY, RAD-1, sa, ea);
+    ctx.closePath();
+    ctx.fillStyle = isHL ? '#1c1010' : (i%2===0 ? '#0f0f0f' : '#131313');
+    ctx.fill();
+
+    // RED separator line — thick like the reference
+    ctx.beginPath();
+    ctx.moveTo(CX, CY);
+    ctx.lineTo(CX + RAD*Math.cos(sa), CY + RAD*Math.sin(sa));
+    ctx.strokeStyle = isHL ? '#ff4444' : '#aa0000';
+    ctx.lineWidth   = isHL ? 3 : 2;
+    ctx.stroke();
+
+    // golden glow on highlighted
+    if (isHL) {
+      ctx.save();
+      ctx.shadowBlur = 22; ctx.shadowColor = '#ff2222';
+      ctx.strokeStyle = '#cc2222'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(CX,CY); ctx.arc(CX,CY,RAD-1,sa,ea); ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // champion icons — circular, two rings
+    const ch = active[i];
+    if (ch.img) {
+      const drawIcon = (dist, maxSz) => {
+        const sz = Math.max(3, Math.min(maxSz, (2 * Math.PI * dist / n) - 1));
+        if (sz < 4) return;
+        const ix = CX + dist * Math.cos(ma);
+        const iy = CY + dist * Math.sin(ma);
+        ctx.save();
+        ctx.beginPath(); ctx.arc(ix, iy, sz / 2, 0, Math.PI * 2); ctx.clip();
+        ctx.drawImage(ch.img, ix - sz / 2, iy - sz / 2, sz, sz);
+        ctx.restore();
+        // Comfort pick outer glow (top 5 mastery)
+        if (comfortPickSet.has(ch.id) && sz >= 10) {
+          ctx.save();
+          ctx.beginPath(); ctx.arc(ix, iy, sz / 2 + 3.5, 0, Math.PI * 2);
+          ctx.strokeStyle = '#f0c030';
+          ctx.lineWidth   = Math.max(1.5, sz * 0.10);
+          ctx.shadowBlur  = 10; ctx.shadowColor = '#f0c030';
+          ctx.globalAlpha = 0.55;
+          ctx.stroke();
+          ctx.restore();
+        }
+        // Mastery ring — drawn OVER the portrait
+        const mas = masteryData[ch.id];
+        if (mas && mas.level >= 3 && sz >= 10) {
+          const ringColor = MASTERY_RING[Math.min(mas.level, 7)] || MASTERY_RING[3];
+          ctx.save();
+          ctx.beginPath(); ctx.arc(ix, iy, sz / 2 + 1.2, 0, Math.PI * 2);
+          ctx.strokeStyle = ringColor; ctx.lineWidth = Math.max(1.2, sz * 0.08);
+          ctx.shadowBlur = 4; ctx.shadowColor = ringColor;
+          ctx.stroke();
+          ctx.restore();
+        }
+      };
+      drawIcon(RAD - 16, 20);                     // outer ring
+      if (RAD > 200) drawIcon(RAD - 42, 16);      // inner ring
+    }
+  }
+
+  // close last separator
+  ctx.beginPath();
+  ctx.moveTo(CX,CY);
+  ctx.lineTo(CX + RAD*Math.cos(angle - Math.PI/2 + n*seg), CY + RAD*Math.sin(angle - Math.PI/2 + n*seg));
+  ctx.strokeStyle = '#8b0000'; ctx.lineWidth = 1; ctx.stroke();
+
+  // outer border ring
+  ctx.beginPath(); ctx.arc(CX,CY,RAD,0,Math.PI*2);
+  ctx.strokeStyle = '#2a0a0a'; ctx.lineWidth = 4; ctx.stroke();
+
+  // inner dark disc
+  ctx.beginPath(); ctx.arc(CX,CY,IR+6,0,Math.PI*2);
+  ctx.fillStyle = '#080808'; ctx.fill();
+  ctx.strokeStyle = '#300000'; ctx.lineWidth = 2; ctx.stroke();
+
+  // spin button
+  const g = ctx.createRadialGradient(CX,CY-14,4, CX,CY,IR);
+  g.addColorStop(0, spinning ? '#501010' : '#c02020');
+  g.addColorStop(1, spinning ? '#200808' : '#6a0a0a');
+  ctx.beginPath(); ctx.arc(CX,CY,IR,0,Math.PI*2);
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = spinning ? '#300000' : '#ff222230'; ctx.lineWidth = 2; ctx.stroke();
+
+  ctx.fillStyle = spinning ? '#664444' : '#fff';
+  ctx.font = 'bold 15px Cinzel,Georgia';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('SPIN', CX, CY);
+
+  // pointer triangle
+  const tip = CY - RAD - 2;
+  ctx.save();
+  ctx.shadowBlur = 12; ctx.shadowColor = '#ff2222';
+  ctx.fillStyle = '#ff2222';
+  ctx.beginPath();
+  ctx.moveTo(CX,      CY - RAD + 14);
+  ctx.lineTo(CX - 11, tip - 5);
+  ctx.lineTo(CX + 11, tip - 5);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+// ─────────────────────────────────────────────────────
+//  SPIN
+// ─────────────────────────────────────────────────────
+function spin() {
+  if (spinning || selected) return;
+  const active = champions.filter(c => !c.blacklisted);
+  if (!active.length) return;
+
+  spinning = true; highlighted = null;
+  undoStack = null;
+  document.getElementById('undo-bl-btn').style.display = 'none';
+
+  // ── Shuffle-bag: guarantees every champion appears once per cycle before repeating ──
+  // Flush bag entries that are no longer active (blacklisted since bag was filled)
+  spinBag = spinBag.filter(id => active.some(c => c.id === id));
+  // Refill when empty
+  if (spinBag.length === 0) {
+    const shuffled = [...active].sort(() => Math.random() - 0.5);
+    spinBag = shuffled.map(c => c.id);
+    // Anti-repeat: if first entry matches last spun, move it to end
+    if (lastSpunId && spinBag.length > 1 && spinBag[0] === lastSpunId) {
+      spinBag.push(spinBag.shift());
+    }
+  }
+  const nextId = spinBag.shift();
+  const tgt    = active.find(c => c.id === nextId) || active[0];
+  const ti     = active.indexOf(tgt);
+  lastSpunId   = tgt.id;
+  const n      = active.length;
+  const seg = (2*Math.PI) / n;
+
+  const desired  = -(ti*seg + seg/2);
+  const curNorm  = ((angle   % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+  const destNorm = ((desired % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+  let   delta    = (destNorm - curNorm + 2*Math.PI) % (2*Math.PI);
+  if (delta < 0.05) delta += 2*Math.PI;
+
+  const totalDelta = (5 + Math.floor(Math.random()*6)) * 2*Math.PI + delta;
+  const duration   = 4500 + Math.random()*1500;
+  const startAngle = angle;
+  const t0         = performance.now();
+
+  // spin is silent — sfxSpin removed per user request
+
+  function ease(t) { return 1 - Math.pow(1-t, 4); }
+  function frame(now) {
+    const t = Math.min((now-t0)/duration, 1);
+    angle   = startAngle + totalDelta * ease(t);
+    drawWheel();
+    if (t < 1) { requestAnimationFrame(frame); }
+    else {
+      angle = startAngle + totalDelta;
+      spinning = false; selected = tgt; highlighted = tgt;
+      drawWheel();
+      setTimeout(() => showResult(tgt), 400);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+// ─────────────────────────────────────────────────────
+//  SOUND ENGINE  (Web Audio API — no external files)
+// ─────────────────────────────────────────────────────
+let _ac = null;
+function ac() {
+  if (!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
+  if (_ac.state === 'suspended') _ac.resume();
+  return _ac;
+}
+
+// ─────────────────────────────────────────────────────
+//  PUBLIC / WEB — voice language + entrance gate
+// ─────────────────────────────────────────────────────
+const VO_LOCALE_KEY = 'vl_vo_locale';
+try { const _vl = localStorage.getItem(VO_LOCALE_KEY); if (_vl === 'tr_tr' || _vl === 'default') voLocale = _vl; } catch(e) {}
+function setVoLocale(loc){
+  voLocale = (loc === 'tr_tr') ? 'tr_tr' : 'default';
+  try { localStorage.setItem(VO_LOCALE_KEY, voLocale); } catch(e) {}
+  updateLangUI();
+}
+function updateLangUI(){
+  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === voLocale));
+}
+function enterRift(){
+  const g = document.getElementById('enter-gate');
+  if (g) g.classList.add('hidden');
+  // Unlock audio on the user gesture so VO / SFX can play on public browsers
+  try { const c = ac(); if (c && c.state === 'suspended') c.resume(); } catch(e) {}
+  const bg = document.getElementById('bg-video');
+  if (bg) { bg.muted = true; const p = bg.play(); if (p && p.catch) p.catch(()=>{}); }
+}
+// reflect saved language on the toggle controls
+updateLangUI();
+
+
+// Victory fanfare — ascending bright notes
+function sfxVictory() {
+  try {
+    const c = ac();
+    [[523,0],[659,0.13],[784,0.26],[1047,0.4],[1319,0.55]].forEach(([freq, delay]) => {
+      const t    = c.currentTime + delay;
+      const osc  = c.createOscillator();
+      const gain = c.createGain();
+      osc.connect(gain); gain.connect(c.destination);
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.28, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+      osc.start(t); osc.stop(t + 0.6);
+    });
+    // chord hit underneath
+    [261, 329, 392].forEach(freq => {
+      const t    = c.currentTime + 0.55;
+      const osc  = c.createOscillator();
+      const gain = c.createGain();
+      osc.connect(gain); gain.connect(c.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.15, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
+      osc.start(t); osc.stop(t + 1);
+    });
+  } catch(e) {}
+}
+
+// Defeat — descending dark notes
+function sfxDefeat() {
+  try {
+    const c = ac();
+    [[350,0],[280,0.2],[220,0.42],[140,0.68]].forEach(([freq, delay]) => {
+      const t    = c.currentTime + delay;
+      const osc  = c.createOscillator();
+      const gain = c.createGain();
+      osc.connect(gain); gain.connect(c.destination);
+      osc.type = 'sawtooth';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.22, t + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+      osc.start(t); osc.stop(t + 0.55);
+    });
+    // low boom
+    const t   = c.currentTime + 0.7;
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.connect(gain); gain.connect(c.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(120, t);
+    osc.frequency.exponentialRampToValueAtTime(30, t + 0.8);
+    gain.gain.setValueAtTime(0.4, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.9);
+    osc.start(t); osc.stop(t + 1);
+  } catch(e) {}
+}
+
+// Blacklist — dramatic impact
+function sfxBlacklist() {
+  try {
+    const c = ac(), t = c.currentTime;
+    // low thud
+    const osc1 = c.createOscillator(), g1 = c.createGain();
+    osc1.connect(g1); g1.connect(c.destination);
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(200, t);
+    osc1.frequency.exponentialRampToValueAtTime(40, t + 0.6);
+    g1.gain.setValueAtTime(0.5, t);
+    g1.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+    osc1.start(t); osc1.stop(t + 0.7);
+    // high screech
+    const osc2 = c.createOscillator(), g2 = c.createGain();
+    osc2.connect(g2); g2.connect(c.destination);
+    osc2.type = 'sawtooth';
+    osc2.frequency.setValueAtTime(800, t);
+    osc2.frequency.exponentialRampToValueAtTime(200, t + 0.35);
+    g2.gain.setValueAtTime(0.18, t);
+    g2.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    osc2.start(t); osc2.stop(t + 0.4);
+  } catch(e) {}
+}
+
+// Zilean — clock chime magic
+function sfxZilean() {
+  try {
+    const c = ac();
+    [[900,0],[1100,0.18],[1350,0.36],[1100,0.56],[900,0.74],[1350,0.95]].forEach(([freq, delay]) => {
+      const t    = c.currentTime + delay;
+      const osc  = c.createOscillator();
+      const gain = c.createGain();
+      osc.connect(gain); gain.connect(c.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.22, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      osc.start(t); osc.stop(t + 0.45);
+    });
+  } catch(e) {}
+}
+
+// Revive — bright upward sweep
+function sfxRevive() {
+  try {
+    const c = ac(), t = c.currentTime;
+    const osc  = c.createOscillator(), gain = c.createGain();
+    osc.connect(gain); gain.connect(c.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(300, t);
+    osc.frequency.exponentialRampToValueAtTime(1200, t + 0.5);
+    gain.gain.setValueAtTime(0.22, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+    osc.start(t); osc.stop(t + 0.6);
+  } catch(e) {}
+}
+
+// sfxSpin removed — wheel spins silently
+
+// ─────────────────────────────────────────────────────
+//  CHAMPION VOICE LINES  (Turkish — Community Dragon)
+// ─────────────────────────────────────────────────────
+let _activeVO = null;
+
+function playChampionVO(champId, type) {
+  // Stop whatever is already playing
+  if (_activeVO) { try { _activeVO.pause(); } catch(e) {} _activeVO = null; }
+  const key = champKeyMap[champId];
+  if (!key) return;
+  // type: 'choose' = pick line, 'ban' = ban line
+  const url = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${voLocale}/v1/champion-${type}-vo/${key}.ogg`;
+  const audio = new Audio(url);
+  audio.volume = 0.92;
+  _activeVO = audio;
+  audio.play().catch(() => { _activeVO = null; }); // silently ignore autoplay policy
+  audio.onended = () => { _activeVO = null; };
+}
+
+// ─────────────────────────────────────────────────────
+//  SKIN CACHE  (lazy per champion, 6s timeout)
+// ─────────────────────────────────────────────────────
+const skinCache          = {};
+const champKeyMap        = {}; // ch.id → numeric champion key (from championFull)
+const preferredSkin      = {}; // ch.id → skin num of highest-rarity skin
+const preferredSkinRarity= {}; // ch.id → numeric rarity rank of preferred skin (0-8)
+const preferredSkinName  = {}; // ch.id → display name of the preferred skin
+const animatedSplash     = {}; // ch.id → Community Dragon animated .webm URL (or undefined)
+// Keep references to in-flight preload images so they aren't garbage-collected
+const _skinPreloads  = new Set();
+async function fetchSkins(ch) {
+  if (skinCache[ch.id]) return skinCache[ch.id];
+  try {
+    const ctrl = new AbortController();
+    const tid  = setTimeout(() => ctrl.abort(), 6000);
+    const res  = await fetch(
+      `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion/${ch.id}.json`,
+      { signal: ctrl.signal }
+    );
+    clearTimeout(tid);
+    const data = await res.json();
+    skinCache[ch.id] = data.data[ch.id].skins.map(s => s.num);
+  } catch {
+    skinCache[ch.id] = [0];
+  }
+  return skinCache[ch.id];
+}
+
+// ─────────────────────────────────────────────────────
+//  RESULT — FULL SCREEN SPLASH ART
+// ─────────────────────────────────────────────────────
+function showResult(ch) {
+  const screen = document.getElementById('result-screen');
+  const splash = document.getElementById('result-splash');
+
+  // fill text
+  document.getElementById('r-name').textContent = ch.name.toUpperCase();
+  const w = ch.wins;
+  document.getElementById('r-wins').textContent =
+    w === 0 ? 'First time on this champion!' : `${w} win${w!==1?'s':''} on this champion`;
+
+  // clear old splash
+  splash.classList.remove('loaded');
+  splash.src = '';
+
+  // show screen
+  screen.classList.add('on');
+  requestAnimationFrame(() => requestAnimationFrame(() => screen.classList.add('vis')));
+
+  // Play Turkish pick voice line as champion is revealed
+  setTimeout(() => playChampionVO(ch.id, 'choose'), 350);
+
+  // Genshin-style reveal banner slides in from left
+  showChampRevealBanner(ch);
+
+  // Match history dots (requires Riot account connected)
+  renderMatchHistory(ch);
+
+  // Mastery milestone check — slight delay so result screen is visible
+  setTimeout(() => showMasteryMilestone(ch), 900);
+
+  // Rarity flash — blaze the skin tier over the splash art
+  setTimeout(() => showRarityFlash(ch.id), 1300);
+
+  // Use HD Community Dragon splash when available (1920×1080), else DDragon fallback
+  const cdBase  = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-splashes/${ch.id.toLowerCase()}/${ch.id.toLowerCase()}`;
+  const ddBase  = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${ch.id}`;
+  const base    = ddBase; // for fallback queue; primary HD paths used below
+  const videoEl  = document.getElementById('result-video');
+  const shimmerEl = document.getElementById('transcendent-shimmer');
+
+  // Reset video from any previous champion
+  videoEl.classList.remove('loaded');
+  videoEl.pause();
+  videoEl.removeAttribute('src');
+  videoEl.load();
+
+  // Transcendent shimmer — activate only when rank 8 AND no local video is available
+  const skinRank = preferredSkinRarity[ch.id] ?? 0;
+  const hasTranscendentVideo = skinRank >= 8 && !!animatedSplash[ch.id];
+  if (skinRank >= 8 && !hasTranscendentVideo) {
+    shimmerEl.classList.add('active');
+  } else {
+    shimmerEl.classList.remove('active');
+  }
+
+  // Hir Selection label — show for all champions with a forced skin override
+  const hirEl = document.getElementById('hir-selection');
+  hirEl.classList.remove('show');
+  const isHirChamp = (ch.id in FORCED_SKINS) || (ch.id in TRANSCENDENT_SKINS);
+  if (isHirChamp) {
+    setTimeout(() => hirEl.classList.add('show'), 650);
+  }
+
+  // Always show a static image immediately so screen is never black.
+  // Prefer the forced skin's HD splash; fall back through CD then DDragon default.
+  splash.onload  = () => splash.classList.add('loaded');
+  splash.onerror = () => { splash.src = `${ddBase}_0.jpg`; };
+  const forcedNum = FORCED_SKINS[ch.id];
+  const initHd    = forcedNum !== undefined
+    ? (hdSplashForced[ch.id] || `${cdBase}_${forcedNum}.jpg`)
+    : (hdSplash[ch.id] || `${cdBase}_0.jpg`);
+  splash.src = initHd;
+
+  // ── Animated splash video (Ultimate / Legendary skins via Community Dragon) ──
+  const vidUrl = animatedSplash[ch.id];
+  if (vidUrl) {
+    videoEl.onloadeddata = () => {
+      // Video buffered enough to play — fade it in over the static image
+      videoEl.classList.add('loaded');
+    };
+    videoEl.onerror = () => {
+      // Video URL failed — static skin flow will already be running below
+      videoEl.classList.remove('loaded');
+    };
+    videoEl.src = vidUrl;
+    videoEl.load();
+  }
+
+  // ── Static skin flow: highest-rarity first, then others, default as last resort ──
+  function applySkin(url) {
+    if (!splash.src.includes(ch.id) && splash.src !== '') return; // user moved on
+    splash.classList.remove('loaded');
+    splash.onload  = () => splash.classList.add('loaded');
+    splash.onerror = () => {};
+    splash.src = url;
+  }
+
+  function trySkinsInOrder(queue) {
+    if (!queue.length) return;
+    const num = queue[0];
+    // Try HD Community Dragon URL first, fall back to DDragon
+    const hdUrl = `${cdBase}_${num}.jpg`;
+    const ddUrl = `${base}_${num}.jpg`;
+    const img   = new Image();
+    _skinPreloads.add(img);
+    img.onload  = () => { _skinPreloads.delete(img); applySkin(hdUrl); };
+    img.onerror = () => {
+      _skinPreloads.delete(img);
+      // Try DDragon fallback before moving to next skin
+      const img2 = new Image();
+      _skinPreloads.add(img2);
+      img2.onload  = () => { _skinPreloads.delete(img2); applySkin(ddUrl); };
+      img2.onerror = () => { _skinPreloads.delete(img2); trySkinsInOrder(queue.slice(1)); };
+      img2.src = ddUrl;
+    };
+    img.src = hdUrl;
+  }
+
+  const cached   = skinCache[ch.id];
+  const altSkins = cached ? cached.filter(n => n !== 0) : [];
+
+  if (altSkins.length > 0) {
+    // Forced skin always first; then highest-rarity; rest shuffled
+    const forced = FORCED_SKINS[ch.id];
+    const pref   = forced !== undefined ? forced : preferredSkin[ch.id];
+    const rest   = altSkins.filter(n => n !== pref).sort(() => Math.random() - 0.5);
+    const ordered = (pref !== undefined) ? [pref, ...rest] : rest;
+    trySkinsInOrder(ordered);
+
+  } else if (!cached) {
+    // Fallback: lazy per-champion fetch (if championFull failed)
+    fetchSkins(ch).then(skins => {
+      const alt = [...skins.filter(n => n !== 0)].sort(() => Math.random() - 0.5);
+      trySkinsInOrder(alt);
+    });
+  }
+  // else: champion genuinely has no alternate skins — default already showing
+}
+
+// ─────────────────────────────────────────────────────
+//  CHAMPION REVEAL BANNER  (Genshin-style slide-in)
+// ─────────────────────────────────────────────────────
+function showChampRevealBanner(ch) {
+  const rank    = preferredSkinRarity[ch.id] ?? 0;
+  const def     = RARITY_DEFS[rank];
+  const color   = def ? def.color : '#c8aa6e';
+  const banner  = document.getElementById('champ-reveal-banner');
+  const portrait= document.getElementById('crb-portrait');
+  const gem      = document.getElementById('crb-gem');
+  const nameEl   = document.getElementById('crb-name');
+  const skinNameEl = document.getElementById('crb-skin-name');
+  const starsEl  = document.getElementById('crb-stars');
+
+  // CSS variable drives the accent bar + glow
+  banner.style.setProperty('--crb-color', color);
+
+  // Portrait
+  portrait.src = ch.img ? ch.img.src : '';
+  portrait.style.borderColor = color;
+  portrait.style.boxShadow   = `0 0 18px ${color}99`;
+
+  // Rarity gem icon (small, bottom-right of portrait)
+  if (def && def.icon) {
+    gem.style.display = 'block';
+    gem.onerror = () => { gem.style.display = 'none'; };
+    gem.src = `${RARITY_ICON_BASE}${def.icon}.png`;
+  } else {
+    gem.style.display = 'none';
+  }
+
+  // Champion name
+  nameEl.textContent = ch.name.toUpperCase();
+
+  // Mastery row
+  const masteryEl = document.getElementById('crb-mastery');
+  const mas = masteryData[ch.id];
+  if (mas) {
+    const masColor = MASTERY_RING[Math.min(mas.level, 7)] || '#888';
+    const pts = mas.points >= 1000000
+      ? (mas.points / 1000000).toFixed(2) + 'M'
+      : mas.points >= 1000
+      ? Math.floor(mas.points / 1000) + 'K'
+      : mas.points;
+    masteryEl.textContent = `M${mas.level}  ·  ${pts} pts`;
+    masteryEl.style.color   = masColor;
+    masteryEl.style.display = 'block';
+  } else {
+    masteryEl.style.display = 'none';
+  }
+
+  // Skin name (from Community Dragon preferredSkinName)
+  const sName = preferredSkinName[ch.id];
+  if (sName && sName !== ch.name) {
+    skinNameEl.textContent = sName;
+    skinNameEl.style.display = 'block';
+  } else {
+    skinNameEl.style.display = 'none';
+  }
+
+  // Stars — counts and effects from RARITY_DEFS
+  const starCount = def ? def.stars : 1;
+  const fx        = def ? def.effects : null;
+  starsEl.innerHTML = '';
+  starsEl.style.setProperty('--crb-color', color);
+  for (let i = 0; i < starCount; i++) {
+    const s = document.createElement('span');
+    s.textContent = '★';
+    // Ultimate+ gets pulsing glow class
+    s.className = fx ? `crb-star glow` : 'crb-star';
+    s.style.color = color;
+    // Stagger pulse phase so stars don't all pulse in sync
+    if (fx) s.style.animationDelay = `${(i * 0.12).toFixed(2)}s`;
+    starsEl.appendChild(s);
+  }
+  // Exalted / Transcendent — fire spark particles from the star area
+  if (fx === 'exalted' || fx === 'transcendent') {
+    const sparkCount = fx === 'transcendent' ? 28 : 16;
+    const rect = starsEl.getBoundingClientRect();
+    const cx   = rect.left + rect.width  / 2;
+    const cy   = rect.top  + rect.height / 2;
+    for (let i = 0; i < sparkCount; i++) {
+      setTimeout(() => {
+        const sp  = document.createElement('div');
+        sp.className = 'star-spark';
+        sp.style.background = color;
+        sp.style.boxShadow  = `0 0 6px ${color}`;
+        const ang = Math.random() * Math.PI * 2;
+        const dist = 30 + Math.random() * 60;
+        sp.style.setProperty('--sx', `${Math.cos(ang)*dist}px`);
+        sp.style.setProperty('--sy', `${Math.sin(ang)*dist}px`);
+        sp.style.left = `${cx + window.scrollX}px`;
+        sp.style.top  = `${cy + window.scrollY}px`;
+        document.body.appendChild(sp);
+        setTimeout(() => sp.remove(), 950);
+      }, i * (fx === 'transcendent' ? 55 : 80));
+    }
+  }
+
+  // Reset then slide in
+  banner.classList.remove('visible');
+  void banner.offsetWidth;
+  setTimeout(() => banner.classList.add('visible'), 180);
+}
+
+function hideChampRevealBanner() {
+  document.getElementById('champ-reveal-banner').classList.remove('visible');
+}
+
+function hideResult() {
+  const screen  = document.getElementById('result-screen');
+  const splash  = document.getElementById('result-splash');
+  const videoEl = document.getElementById('result-video');
+  // Stop champion VO if user dismisses early
+  if (_activeVO) { try { _activeVO.pause(); } catch(e) {} _activeVO = null; }
+  hideChampRevealBanner();
+  document.getElementById('hir-selection').classList.remove('show');
+  screen.classList.remove('vis');
+  setTimeout(() => {
+    screen.classList.remove('on');
+    splash.classList.remove('loaded');
+    splash.src = '';
+    videoEl.classList.remove('loaded');
+    videoEl.pause();
+    videoEl.removeAttribute('src');
+    videoEl.load();
+  }, 450);
+}
+
+function doRespin() {
+  selected    = null;
+  highlighted = null;
+  hideResult();
+  setTimeout(() => { drawWheel(); }, 520);
+}
+
+// ─────────────────────────────────────────────────────
+//  RECORD WIN / LOSS
+// ─────────────────────────────────────────────────────
+function recordResult(outcome) {
+  hideResult();
+  if (!selected) return;
+  const ch = selected; selected = null;
+
+  if (outcome === 'win') {
+    ch.wins++;
+    totalWins++;
+    winStreak++;
+    if (winStreak > bestStreak) bestStreak = winStreak;
+    undoStack = null;
+    document.getElementById('undo-bl-btn').style.display = 'none';
+    sfxVictory();
+    saveState();
+    pushSessionLog(ch, 'win');
+    toast(`Victory! ${ch.name} — ${ch.wins} win${ch.wins!==1?'s':''} total.`);
+    // Streak milestone cinematic
+    setTimeout(() => showStreakCinematic(winStreak), 400);
+    if (winStreak % 3 === 0) setTimeout(showZilean, 700);
+  } else {
+    const streakBefore = winStreak;
+    ch.blacklisted = true;
+    totalLosses++;
+    winStreak = 0;
+    lastBlacklisted = ch;
+    undoStack = { ch, lossCount: totalLosses - 1, streakBefore };
+    document.getElementById('undo-bl-btn').style.display = 'block';
+    saveState();
+    highlighted = null;
+    sfxBlacklist();
+    playChampionVO(ch.id, 'ban');
+    pushSessionLog(ch, 'lose');
+    // red screen flash
+    const flash = document.getElementById('defeat-flash');
+    flash.classList.remove('flash');
+    void flash.offsetWidth; // reflow
+    flash.classList.add('flash');
+    toast(`${ch.name} has been BLACKLISTED! ↩ Undo available.`);
+    renderBlacklist();
+    const remaining = champions.filter(c => !c.blacklisted).length;
+    if (!remaining) setTimeout(showGameOver, 700);
+  }
+
+  updateStats(); drawWheel();
+}
+
+// ─────────────────────────────────────────────────────
+//  ZILEAN
+// ─────────────────────────────────────────────────────
+function showZilean() {
+  sfxZilean();
+  document.getElementById('z-streak-txt').textContent = `${winStreak}-Win Streak Milestone!`;
+  document.getElementById('zilean-ov').classList.add('on');
+}
+function handleZilean(take) {
+  document.getElementById('zilean-ov').classList.remove('on');
+  if (take) {
+    revivalPts++;
+    sfxRevive();
+    saveState();
+    updateStats(); renderBlacklist();
+    toast('Revival Point claimed! Use it to save a blacklisted champion.');
+  } else {
+    toast("Zilean's gift left behind…");
+  }
+}
+
+// ─────────────────────────────────────────────────────
+//  WINS HISTORY
+// ─────────────────────────────────────────────────────
+function openWinsHistory() { renderWinsHistory(); document.getElementById('wh-ov').classList.add('on'); }
+
+function renderWinsHistory() {
+  const winners = champions.filter(c => c.wins > 0).sort((a,b) => b.wins - a.wins);
+  const maxWins = winners.length ? winners[0].wins : 1;
+
+  // update button badge
+  document.getElementById('wh-count').textContent = winners.length;
+
+  const scroll = document.getElementById('wh-scroll');
+  scroll.innerHTML = '';
+
+  if (!winners.length) {
+    scroll.innerHTML = '<div class="wh-empty">No wins recorded yet.<br>Spin the wheel and claim victory!</div>';
+    return;
+  }
+
+  winners.forEach((ch, i) => {
+    const rank = i + 1;
+    const rankClass = rank <= 3 ? ` rank-${rank}` : '';
+    const pct  = Math.round((ch.wins / maxWins) * 100);
+
+    const row  = document.createElement('div');
+    row.className = 'wh-item' + rankClass;
+
+    const rnk  = document.createElement('span'); rnk.className = 'wh-rank'; rnk.textContent = rank;
+    const img  = document.createElement('img');  img.src = ch.img ? ch.img.src : ''; img.alt = ch.name;
+    const info = document.createElement('div');  info.className = 'wh-info';
+
+    const nm   = document.createElement('div'); nm.className = 'wh-name'; nm.textContent = ch.name;
+    const barW = document.createElement('div'); barW.className = 'wh-bar-wrap';
+    const bar  = document.createElement('div'); bar.className  = 'wh-bar';
+    bar.style.width = '0%';
+    setTimeout(() => bar.style.width = pct + '%', 60 + i * 20); // staggered animation
+    barW.appendChild(bar);
+    info.append(nm, barW);
+
+    const badge = document.createElement('div'); badge.className = 'wh-badge';
+    badge.innerHTML = `${ch.wins}<span>win${ch.wins !== 1 ? 's' : ''}</span>`;
+
+    // small blacklisted tag if applicable
+    if (ch.blacklisted) {
+      const tag = document.createElement('div');
+      tag.style.cssText = 'font-size:.48rem;letter-spacing:1px;color:#e05555;text-transform:uppercase;margin-top:3px;';
+      tag.textContent = '☠ blacklisted';
+      info.appendChild(tag);
+    }
+
+    row.append(rnk, img, info, badge);
+    scroll.appendChild(row);
+  });
+}
+
+// ─────────────────────────────────────────────────────
+//  BLACKLIST UI
+// ─────────────────────────────────────────────────────
+function openBlacklist() { renderBlacklist(); document.getElementById('bl-ov').classList.add('on'); }
+
+function renderBlacklist() {
+  const bl = champions.filter(c => c.blacklisted);
+  document.getElementById('bl-count').textContent = bl.length;
+  const scroll = document.getElementById('bl-scroll');
+  scroll.innerHTML = '';
+  if (!bl.length) {
+    scroll.innerHTML = '<div class="bl-empty">No champions blacklisted yet.</div>';
+    return;
+  }
+  bl.forEach(ch => {
+    const row = document.createElement('div'); row.className = 'bl-item';
+    const img = document.createElement('img'); img.src = ch.img ? ch.img.src : ''; img.alt = ch.name;
+    const nm  = document.createElement('span'); nm.className = 'bl-name'; nm.textContent = ch.name;
+    const ws  = document.createElement('span'); ws.className = 'bl-wins'; ws.textContent = ch.wins ? `${ch.wins}W` : '';
+    const btn = document.createElement('button'); btn.className = 'revive-btn'; btn.textContent = 'Revive';
+    btn.disabled = revivalPts <= 0;
+    btn.onclick = () => reviveChamp(ch);
+    row.append(img, nm, ws, btn);
+    scroll.appendChild(row);
+  });
+}
+
+function reviveChamp(ch) {
+  if (revivalPts <= 0) return;
+  if (!confirm(`Use 1 Revival Point to return ${ch.name} to the wheel?`)) return;
+  ch.blacklisted = false;
+  revivalPts--;
+  highlighted = null;
+  sfxRevive();
+  saveState();
+  toast(`${ch.name} has been REVIVED!`);
+  updateStats(); renderBlacklist(); drawWheel();
+}
+
+// ─────────────────────────────────────────────────────
+//  BLACKLIST UNDO
+// ─────────────────────────────────────────────────────
+function undoBlacklist() {
+  if (!undoStack) return;
+  const { ch, lossCount } = undoStack;
+  ch.blacklisted = false;
+  totalLosses    = lossCount;
+  winStreak      = undoStack.streakBefore;
+  undoStack      = null;
+  highlighted    = null;
+  document.getElementById('undo-bl-btn').style.display = 'none';
+  saveState();
+  toast(`↩ Undone — ${ch.name} is back on the wheel.`);
+  updateStats(); renderBlacklist(); drawWheel();
+}
+
+// ─────────────────────────────────────────────────────
+//  SESSION LOG
+// ─────────────────────────────────────────────────────
+function pushSessionLog(ch, outcome) {
+  sessionLog.unshift({ ch, outcome, time: new Date() });
+  if (sidebarTab === 'log') renderSidebarLog();
+}
+
+function formatLogTime(d) {
+  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+}
+
+function renderSidebarLog() {
+  const list = document.getElementById('sb-list');
+  list.innerHTML = '';
+  if (!sessionLog.length) {
+    list.innerHTML = '<div class="sb-empty">No games yet this session.</div>';
+    return;
+  }
+  sessionLog.forEach(({ ch, outcome, time }) => {
+    const row  = document.createElement('div');  row.className = 'sl-row';
+    const img  = document.createElement('img');  img.src = ch.img ? ch.img.src : ''; img.alt = ch.name;
+    const nm   = document.createElement('span'); nm.className = 'sl-name'; nm.textContent = ch.name;
+    const out  = document.createElement('span'); out.className = `sl-outcome ${outcome}`;
+    out.textContent = outcome === 'win' ? 'W' : '☠';
+    const t    = document.createElement('span'); t.className = 'sl-time'; t.textContent = formatLogTime(time);
+    row.append(img, nm, out, t);
+    list.appendChild(row);
+  });
+}
+
+function switchSidebarTab(tab) {
+  sidebarTab = tab;
+  document.getElementById('sb-tab-victories').classList.toggle('active', tab === 'victories');
+  document.getElementById('sb-tab-log').classList.toggle('active', tab === 'log');
+  if (tab === 'victories') renderWinsSidebar();
+  else                     renderSidebarLog();
+}
+
+// ─────────────────────────────────────────────────────
+//  RARITY FLASH
+// ─────────────────────────────────────────────────────
+// Mirrors the in-game rarity order: Transcendent > Exalted > Ultimate > Legendary > Epic > Mythic
+// Mirrors in-game order: Transcendent > Exalted > Ultimate > Legendary > Mythic > Epic
+const RARITY_DEFS = {
+  8: { label: 'TRANSCENDENT', color: '#c8eeff', icon: 'transcendent', stars: 10, effects: 'transcendent' },
+  7: { label: 'EXALTED',      color: '#f0d050', icon: 'exalted',      stars: 7,  effects: 'exalted' },
+  6: { label: 'ULTIMATE',     color: '#ff8c42', icon: 'ultimate',     stars: 6,  effects: 'ultimate' },
+  5: { label: 'LEGENDARY',    color: '#ff4040', icon: 'legendary',    stars: 4 },
+  4: { label: 'MYTHIC',       color: '#9c6fff', icon: 'mythic',       stars: 5 },
+  3: { label: 'EPIC',         color: '#e040fb', icon: 'epic',         stars: 3 },
+  2: { label: 'RARE',         color: '#60a5fa', icon: 'rare',         stars: 2 },
+  1: { label: 'UNCOMMON',     color: '#4ade80', icon: null,           stars: 1 },
+};
+const RARITY_ICON_BASE =
+  'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/rarity-gem-icons/';
+
+// ─────────────────────────────────────────────────────
+//  FORCED SKIN OVERRIDES
+//  These champions always show a specific skin regardless
+//  of which one ranks highest by rarity.
+//  Skin numbers match DDragon / Community Dragon skin IDs.
+// ─────────────────────────────────────────────────────
+const FORCED_SKINS = {
+  Sivir:       51,  // Prestige Mythmaker Sivir
+  Sylas:       34,  // Ashen Slayer Sylas
+  // Mordekaiser removed — auto-picks Sahn-Uzal Mordekaiser (Exalted) from CDragon
+  Pyke:        44,  // Ashen Knight Pyke
+  Shen:        49,  // Ashen Guardian Shen
+  Pantheon:    36,  // Ashen Conqueror Pantheon
+  Jhin:        37,  // Dark Cosmic Erasure Jhin
+  Chogath:      7,  // Dark Star Cho'Gath
+  AurelionSol: 38,  // Divine Architect Porcelain Aurelion Sol
+  Darius:      64,  // Divine God-King Darius
+  Yasuo:       87,  // Genesis Nightbringer Yasuo
+  Garen:       44,  // Fallen God-King Garen
+  LeeSin:      52,  // Divine Heavenscale Lee Sin
+  Yone:        58,  // Peacemaker High Noon Yone
+  Qiyana:      50,  // Prestige Battle Academia Qiyana
+  Leona:       53,  // Prestige Battle Lion Leona
+  Kayle:       67,  // Prestige Empyrean Kayle
+  Katarina:    48,  // Prestige Faerie Court Katarina
+  Zed:         69,  // Prestige Spirit Blossom Zed
+};
+
+// HD splash URLs per champion — populated from Community Dragon uncenteredSplashPath
+// Falls back to DDragon if not available
+const hdSplash = {};       // champId → full HD splash URL (1920×1080 or larger)
+const hdSplashForced = {}; // champId → HD splash URL for the FORCED skin specifically
+
+// Transcendent skins have no animated video in CDragon yet.
+// We manually provide their uncentered HD splash paths directly from CDragon.
+// These activate the CSS shimmer effect on the result screen instead of a video.
+const CDN_BASE = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/';
+const TRANSCENDENT_SKINS = {
+  // Risen Legend Ahri — Hall of Legends 2024
+  Ahri: {
+    skinNum: 85,
+    splash: CDN_BASE + 'assets/characters/ahri/skins/skin85/images/ahri_splash_uncentered_85.skins_ahri_hol.jpg',
+    name: 'Risen Legend Ahri',
+    // Place "transcendent_ahri.mp4" in the same folder as this HTML file
+    video: 'transcendent_ahri.mp4',
+  },
+  // Risen Legend Kai'Sa — Hall of Legends 2024
+  Kaisa: {
+    skinNum: 70,
+    splash: CDN_BASE + 'assets/characters/kaisa/skins/skin70/images/kaisa_splash_uncentered_70.skins_kaisa_hol.jpg',
+    name: "Risen Legend Kai'Sa",
+    // Place "transcendent_kaisa.mp4" in the same folder as this HTML file
+    video: 'transcendent_kaisa.mp4',
+  },
+};
+
+function showRarityFlash(champId) {
+  const rank = preferredSkinRarity[champId];
+  if (!rank || rank < 3) return; // Mythic and above only
+  const def = RARITY_DEFS[rank];
+  if (!def) return;
+
+  const el    = document.getElementById('rarity-flash');
+  const label = document.getElementById('rarity-flash-label');
+  const icon  = document.getElementById('rarity-flash-icon');
+
+  // Background radial tint matching rarity color
+  el.style.background = `radial-gradient(ellipse at center, ${def.color}22 0%, transparent 65%)`;
+
+  // Text label
+  label.textContent = def.label;
+  label.style.color = def.color;
+
+  // Gem icon — reset animation so it re-fires
+  icon.classList.remove('hidden');
+  icon.style.filter = `drop-shadow(0 0 28px ${def.color}) drop-shadow(0 0 70px ${def.color})`;
+  icon.style.animation = 'none';
+  void icon.offsetWidth; // reflow
+  icon.style.animation = '';
+
+  // Try Community Dragon rarity gem icon; fallback silently
+  icon.onerror = () => icon.classList.add('hidden');
+  icon.src = `${RARITY_ICON_BASE}${def.icon}.png`;
+
+  // Fire the container animation
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2300);
+}
+
+// ─────────────────────────────────────────────────────
+//  STREAK CINEMATIC
+// ─────────────────────────────────────────────────────
+const STREAK_MILESTONES = {
+  5:  { color: '#22c55e', label: 'ON FIRE' },
+  10: { color: '#f59e0b', label: 'UNSTOPPABLE' },
+  15: { color: '#ef4444', label: 'LEGENDARY' },
+  20: { color: '#a855f7', label: 'GODLIKE' },
+};
+
+function showStreakCinematic(streak) {
+  let def;
+  if (streak >= 20 && streak % 5 === 0) {
+    def = STREAK_MILESTONES[20];
+  } else {
+    def = STREAK_MILESTONES[streak];
+  }
+  if (!def) return;
+  const el = document.getElementById('streak-cinematic');
+  el.style.setProperty('--sc-color', def.color);
+  document.getElementById('sc-num').textContent   = streak;
+  document.getElementById('sc-label').textContent = def.label;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ─────────────────────────────────────────────────────
+//  AFK / NO RESULT
+// ─────────────────────────────────────────────────────
+function recordAFK() {
+  hideResult();
+  selected = null;
+  highlighted = null;
+  drawWheel();
+  toast('AFK noted — champion stays on the wheel. No result recorded.');
+}
+
+// ─────────────────────────────────────────────────────
+//  GAME OVER
+// ─────────────────────────────────────────────────────
+function showGameOver() {
+  // Final champion portrait
+  const lc = lastBlacklisted;
+  const finalRow = document.getElementById('go-final-row');
+  if (lc) {
+    document.getElementById('go-final-img').src = lc.img ? lc.img.src : '';
+    document.getElementById('go-final-name').textContent = lc.name.toUpperCase();
+    finalRow.style.display = 'flex';
+  } else {
+    finalRow.style.display = 'none';
+  }
+  // Stat pills
+  document.getElementById('go-sw').textContent = totalWins;
+  document.getElementById('go-sl').textContent = totalLosses;
+  document.getElementById('go-ss').textContent = bestStreak;
+  // Top champions (up to 5)
+  const topRow = document.getElementById('go-top-row');
+  topRow.innerHTML = '';
+  const top = champions.filter(c => c.wins > 0).sort((a,b) => b.wins - a.wins).slice(0, 5);
+  if (top.length) {
+    top.forEach((ch, i) => {
+      const rank = i + 1;
+      const div  = document.createElement('div');
+      div.className = 'go-top-champ' + (rank <= 3 ? ` rank-${rank}` : '');
+      const img  = document.createElement('img');
+      img.src = ch.img ? ch.img.src : ''; img.alt = ch.name;
+      const nm   = document.createElement('div'); nm.className = 'gtc-name'; nm.textContent = ch.name;
+      const w    = document.createElement('div'); w.className  = 'gtc-wins'; w.textContent  = ch.wins + 'W';
+      div.append(img, nm, w);
+      topRow.appendChild(div);
+    });
+  } else {
+    topRow.innerHTML = '<div style="font-size:.6rem;letter-spacing:1px;color:#333;text-transform:uppercase;">No wins recorded</div>';
+  }
+  document.getElementById('go-ov').classList.add('on');
+}
+
+function resetGame() {
+  document.getElementById('go-ov').classList.remove('on');
+  localStorage.removeItem(SAVE_KEY);
+  champions.forEach(c => { c.wins=0; c.blacklisted=false; });
+  winStreak = totalWins = totalLosses = revivalPts = bestStreak = 0;
+  angle = 0; selected = highlighted = lastBlacklisted = null;
+  spinBag = []; lastSpunId = null;
+  updateStats(); renderBlacklist(); drawWheel();
+}
+
+// ─────────────────────────────────────────────────────
+//  WINS SIDEBAR
+// ─────────────────────────────────────────────────────
+function toggleSidebar() {
+  const sb  = document.getElementById('wins-sidebar');
+  const btn = document.getElementById('sb-toggle');
+  const collapsed = sb.classList.toggle('collapsed');
+  btn.textContent = collapsed ? '❯' : '❮';
+}
+
+function renderWinsSidebar() {
+  const list    = document.getElementById('sb-list');
+  if (!list) return;
+  const winners = champions.filter(c => c.wins > 0).sort((a, b) => b.wins - a.wins);
+  list.innerHTML = '';
+  if (!winners.length) {
+    list.innerHTML = '<div class="sb-empty">No wins yet.<br>Spin the wheel!</div>';
+    return;
+  }
+  winners.forEach(ch => {
+    const row   = document.createElement('div');  row.className = 'sb-row';
+    const img   = document.createElement('img');  img.src = ch.img ? ch.img.src : ''; img.alt = ch.name;
+    const nm    = document.createElement('span'); nm.className = 'sb-name'; nm.textContent = ch.name;
+    const badge = document.createElement('span'); badge.className = 'sb-badge';
+    badge.textContent = ch.wins + (ch.wins === 1 ? ' WIN' : ' WIN');
+    if (ch.blacklisted) row.style.opacity = '0.45';
+    row.append(img, nm, badge);
+    list.appendChild(row);
+  });
+}
+
+// ─────────────────────────────────────────────────────
+//  STATS
+// ─────────────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('s-streak').textContent    = winStreak;
+  document.getElementById('s-revival').textContent   = revivalPts;
+  document.getElementById('s-remaining').textContent = champions.filter(c=>!c.blacklisted).length;
+  document.getElementById('s-w').textContent  = `W: ${totalWins}`;
+  document.getElementById('s-l').textContent  = `L: ${totalLosses}`;
+  document.getElementById('wh-count').textContent = champions.filter(c=>c.wins>0).length;
+  if (sidebarTab === 'victories') renderWinsSidebar();
+  else renderSidebarLog();
+}
+
+// ─────────────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────────────
+let toastT;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ─────────────────────────────────────────────────────
+//  CANVAS INTERACTION
+// ─────────────────────────────────────────────────────
+CV.addEventListener('click', e => {
+  const rc = CV.getBoundingClientRect();
+  const dx = e.clientX - rc.left - cx();
+  const dy = e.clientY - rc.top  - cy();
+  if (Math.sqrt(dx*dx+dy*dy) <= IR && !selected) spin();
+});
+CV.addEventListener('mousemove', e => {
+  const rc = CV.getBoundingClientRect();
+  const dx = e.clientX - rc.left - cx();
+  const dy = e.clientY - rc.top  - cy();
+  CV.style.cursor = (Math.sqrt(dx*dx+dy*dy) <= IR && !spinning && !selected) ? 'pointer' : 'default';
+});
+
+// ─────────────────────────────────────────────────────
+//  PARALLAX BACKGROUND
+// ─────────────────────────────────────────────────────
+(function() {
+  let tx = 0, ty = 0;   // target offsets
+  let cx = 0, cy = 0;   // current offsets (lerped)
+  const STRENGTH = 22;  // max pixels of movement
+  const LERP     = 0.06; // smoothing factor (lower = more lag = dreamier)
+
+  document.addEventListener('mousemove', e => {
+    const hw = window.innerWidth  / 2;
+    const hh = window.innerHeight / 2;
+    tx = ((e.clientX - hw) / hw) * -STRENGTH;
+    ty = ((e.clientY - hh) / hh) * -STRENGTH;
+  });
+
+  const vid = document.getElementById('bg-video');
+  (function tick() {
+    cx += (tx - cx) * LERP;
+    cy += (ty - cy) * LERP;
+    if (vid) vid.style.transform = `translate(${cx.toFixed(2)}px, ${cy.toFixed(2)}px)`;
+    requestAnimationFrame(tick);
+  })();
+})();
+
+// ─────────────────────────────────────────────────────
+//  RIOT API INTEGRATION
+// ─────────────────────────────────────────────────────
+const RIOT_SAVE_KEY = 'voidlord_riot_v1';
+let riotConfig  = null;   // { key, gameName, tagLine, platform, cluster }
+let riotProfile = null;   // { name, level, iconId, tier, rank, lp, wins, losses }
+const masteryData = {};   // champId (string) → { level, points }
+
+const TIER_COLORS = {
+  CHALLENGER:  '#f4c060', GRANDMASTER: '#e84a4a', MASTER: '#9c6fff',
+  DIAMOND:     '#a8d0f0', EMERALD:     '#4caf50', PLATINUM: '#4dd0e1',
+  GOLD:        '#f0c030', SILVER:      '#aaaaaa', BRONZE:   '#cd7f32',
+  IRON:        '#888888',
+};
+const TIER_RANK = { CHALLENGER:10, GRANDMASTER:9, MASTER:8, DIAMOND:7, EMERALD:6, PLATINUM:5, GOLD:4, SILVER:3, BRONZE:2, IRON:1 };
+
+function saveRiotConfig(cfg) {
+  try { localStorage.setItem(RIOT_SAVE_KEY, JSON.stringify(cfg)); } catch(e) {}
+}
+function loadRiotConfig() {
+  try { const r = localStorage.getItem(RIOT_SAVE_KEY); return r ? JSON.parse(r) : null; } catch(e) { return null; }
+}
+
+function openRiotSettings() {
+  const ov = document.getElementById('riot-settings-ov');
+  ov.classList.add('on');
+  setRsStatus('');
+  // Pre-fill saved config
+  if (riotConfig) {
+    document.getElementById('rs-key').value    = riotConfig.key    || '';
+    document.getElementById('rs-name').value   = riotConfig.gameName || '';
+    document.getElementById('rs-tag').value    = riotConfig.tagLine  || '';
+    const sel = document.getElementById('rs-region');
+    const val = `${riotConfig.platform}|${riotConfig.cluster}`;
+    for (let o of sel.options) { if (o.value === val) { sel.value = val; break; } }
+    document.getElementById('rs-disconnect').style.display = 'block';
+  } else {
+    document.getElementById('rs-disconnect').style.display = 'none';
+  }
+}
+function closeRiotSettings() {
+  document.getElementById('riot-settings-ov').classList.remove('on');
+}
+function setRsStatus(msg, cls = '') {
+  const el = document.getElementById('rs-status');
+  el.textContent = msg; el.className = 'rs-status ' + cls;
+}
+
+async function saveRiotSettings() {
+  const key      = document.getElementById('rs-key').value.trim();
+  const gameName = document.getElementById('rs-name').value.trim();
+  const tagLine  = document.getElementById('rs-tag').value.trim();
+  const regionVal= document.getElementById('rs-region').value;
+  const [platform, cluster] = regionVal.split('|');
+
+  if (!key || !gameName || !tagLine) {
+    setRsStatus('Please fill in all fields.', 'err'); return;
+  }
+  setRsStatus('Connecting…', 'loading');
+
+  const cfg = { key, gameName, tagLine, platform, cluster };
+  const ok = await connectRiotAccount(cfg);
+  if (ok) {
+    riotConfig = cfg;
+    saveRiotConfig(cfg);
+    closeRiotSettings();
+    toast('Riot account connected!');
+  }
+}
+
+function disconnectRiot() {
+  riotConfig = null; riotProfile = null;
+  Object.keys(masteryData).forEach(k => delete masteryData[k]);
+  matchCache = []; comfortPickSet.clear();
+  sessionStartLP = null; sessionStartTier = null;
+  stopAutoRefresh();
+  localStorage.removeItem(RIOT_SAVE_KEY);
+  renderRiotProfilePanel();
+  closeRiotSettings();
+  drawWheel();
+  toast('Account disconnected.');
+}
+
+async function connectRiotAccount(cfg) {
+  try {
+    const h = { 'X-Riot-Token': cfg.key };
+
+    // 1. PUUID via Riot Account API
+    const acRes = await fetch(
+      `https://${cfg.cluster}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(cfg.gameName)}/${encodeURIComponent(cfg.tagLine)}`,
+      { headers: h }
+    );
+    if (!acRes.ok) {
+      const msg = acRes.status === 403 ? 'Invalid API key.' : acRes.status === 404 ? 'Riot ID not found.' : `Error ${acRes.status}`;
+      setRsStatus(msg, 'err'); return false;
+    }
+    const acData  = await acRes.json();
+    const puuid   = acData.puuid;
+
+    // 2. Summoner data (icon, level, summonerId)
+    const sumRes  = await fetch(
+      `https://${cfg.platform}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`,
+      { headers: h }
+    );
+    if (!sumRes.ok) { setRsStatus(`Summoner fetch failed (${sumRes.status}).`, 'err'); return false; }
+    const sumData = await sumRes.json();
+
+    // 3. Ranked data — try by-puuid (newer) first, fall back to by-summoner
+    let rnkData = [];
+    try {
+      const r1 = await fetch(
+        `https://${cfg.platform}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`,
+        { headers: h }
+      );
+      if (r1.ok) rnkData = await r1.json();
+    } catch(e) {}
+
+    // Fallback: by encrypted summoner ID (old endpoint)
+    if (!rnkData.length && sumData.id) {
+      try {
+        const r2 = await fetch(
+          `https://${cfg.platform}.api.riotgames.com/lol/league/v4/entries/by-summoner/${sumData.id}`,
+          { headers: h }
+        );
+        if (r2.ok) rnkData = await r2.json();
+      } catch(e) {}
+    }
+
+    console.log('[Riot] Ranked data:', rnkData); // debug — visible in DevTools
+
+    // Prefer Solo/Duo, fall back to Flex
+    const solo = rnkData.find(e => e.queueType === 'RANKED_SOLO_5x5')
+              || rnkData.find(e => e.queueType === 'RANKED_FLEX_SR')
+              || null;
+    const queueLabel = solo?.queueType === 'RANKED_FLEX_SR' ? ' (Flex)' : '';
+
+    riotProfile = {
+      name:       `${cfg.gameName}#${cfg.tagLine}`,
+      level:      sumData.summonerLevel,
+      iconId:     sumData.profileIconId,
+      tier:       solo ? solo.tier          : null,
+      rank:       solo ? solo.rank          : null,
+      lp:         solo ? solo.leaguePoints  : 0,
+      wins:       solo ? solo.wins          : 0,
+      losses:     solo ? solo.losses        : 0,
+      queueLabel,
+      puuid,
+      sumId: sumData.id,
+    };
+
+    // 4. Mastery (top 150 champions — covers everyone we care about)
+    const masRes = await fetch(
+      `https://${cfg.platform}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/${puuid}/top?count=150`,
+      { headers: h }
+    );
+    if (masRes.ok) {
+      const masArr = await masRes.json();
+      // Build reverse map: numericKey → champId string (champKeyMap already has id→key)
+      const keyToId = {};
+      Object.entries(champKeyMap).forEach(([id, key]) => { keyToId[key] = id; });
+      masArr.forEach(m => {
+        const champId = keyToId[m.championId];
+        if (champId) masteryData[champId] = {
+          level:          m.championLevel,
+          points:         m.championPoints,
+          pointsUntilNext: m.championPointsUntilNextLevel ?? 0,
+        };
+      });
+    }
+
+    // 5. Record session-start LP for delta tracking
+    if (solo) {
+      sessionStartLP   = solo.leaguePoints;
+      sessionStartTier = solo.tier;
+    }
+
+    // 6. Pre-fetch match history (non-blocking)
+    fetchMatchHistoryCache(cfg, puuid).catch(() => {});
+
+    // 7. Start auto-refresh timer
+    startAutoRefresh();
+
+    setRsStatus('Connected!', 'ok');
+    renderRiotProfilePanel();
+    buildComfortPickSet();
+    drawWheel(); // redraw with mastery rings + comfort glow
+    return true;
+
+  } catch(e) {
+    console.error('Riot API error:', e);
+    setRsStatus('Connection failed. Check your API key and region.', 'err');
+    return false;
+  }
+}
+
+function renderRiotProfilePanel() {
+  const panel   = document.getElementById('riot-profile');
+  const connBtn = document.getElementById('rp-connect-btn');
+  const connDiv = document.getElementById('rp-connected');
+
+  if (!riotProfile) {
+    connBtn.style.display = 'block';
+    connDiv.style.display = 'none';
+    panel.style.setProperty('--rp-color', '#c8aa6e');
+    document.getElementById('lg-open-btn').style.display = 'none';
+    return;
+  }
+
+  connBtn.style.display = 'none';
+  connDiv.style.display = 'flex';
+  document.getElementById('lg-open-btn').style.display = 'block';
+
+  // Profile icon
+  const iconUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/${riotProfile.iconId}.png`;
+  document.getElementById('rp-icon').src = iconUrl;
+  document.getElementById('rp-level').textContent = riotProfile.level;
+
+  // Name
+  document.getElementById('rp-name').textContent = riotProfile.name;
+
+  // Rank
+  const tierColor = riotProfile.tier ? (TIER_COLORS[riotProfile.tier] || '#c8aa6e') : '#c8aa6e';
+  panel.style.setProperty('--rp-color', tierColor);
+  document.getElementById('rp-icon').style.borderColor = tierColor;
+
+  if (riotProfile.tier) {
+    document.getElementById('rp-rank').textContent =
+      `${riotProfile.tier} ${riotProfile.rank}${riotProfile.queueLabel || ''}`;
+    document.getElementById('rp-rank').style.color = tierColor;
+    document.getElementById('rp-lp').textContent =
+      `${riotProfile.lp} LP · ${riotProfile.wins}W ${riotProfile.losses}L`;
+  } else {
+    document.getElementById('rp-rank').textContent = 'Unranked';
+    document.getElementById('rp-rank').style.color = '#666';
+    document.getElementById('rp-lp').textContent = 'No ranked games found';
+  }
+  renderLPDelta();
+}
+
+// ─────────────────────────────────────────────────────
+//  COMFORT PICKS  (top 5 mastery → extra glow on wheel)
+// ─────────────────────────────────────────────────────
+let comfortPickSet = new Set(); // top 5 champIds by mastery points
+
+function buildComfortPickSet() {
+  comfortPickSet.clear();
+  const sorted = Object.entries(masteryData)
+    .sort((a, b) => b[1].points - a[1].points)
+    .slice(0, 5);
+  sorted.forEach(([id]) => comfortPickSet.add(id));
+}
+
+// ─────────────────────────────────────────────────────
+//  MASTERY MILESTONE ALERT
+// ─────────────────────────────────────────────────────
+let mmTimer = null;
+function showMasteryMilestone(ch) {
+  const mas = masteryData[ch.id];
+  if (!mas || mas.pointsUntilNext <= 0 || mas.pointsUntilNext > 5000) return;
+
+  const color   = MASTERY_RING[Math.min(mas.level + 1, 7)] || '#f0c030';
+  const banner  = document.getElementById('mastery-milestone');
+  banner.style.setProperty('--mm-color', color);
+  document.getElementById('mm-text').textContent = `Only`;
+  document.getElementById('mm-pts').textContent  =
+    `${mas.pointsUntilNext.toLocaleString()} pts → M${mas.level + 1} on ${ch.name}`;
+
+  banner.classList.remove('show');
+  void banner.offsetWidth;
+  banner.classList.add('show');
+  clearTimeout(mmTimer);
+  mmTimer = setTimeout(() => banner.classList.remove('show'), 4500);
+}
+
+// ─────────────────────────────────────────────────────
+//  MATCH HISTORY CACHE + DISPLAY
+// ─────────────────────────────────────────────────────
+let matchCache    = []; // { championId (numeric), win }
+let matchCachePuuid = null;
+
+async function fetchMatchHistoryCache(cfg, puuid) {
+  try {
+    const h = { 'X-Riot-Token': cfg.key };
+    const idsRes = await fetch(
+      `https://${cfg.cluster}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=420&count=20`,
+      { headers: h }
+    );
+    if (!idsRes.ok) return;
+    const ids = await idsRes.json();
+    if (!ids.length) return;
+
+    // Fetch all 20 match details in parallel
+    const results = await Promise.all(
+      ids.map(id =>
+        fetch(`https://${cfg.cluster}.api.riotgames.com/lol/match/v5/matches/${id}`, { headers: h })
+          .then(r => r.ok ? r.json() : null).catch(() => null)
+      )
+    );
+    matchCache = [];
+    results.forEach(m => {
+      if (!m) return;
+      const p = m.info.participants.find(p => p.puuid === puuid);
+      if (p) matchCache.push({ championId: p.championId, win: p.win });
+    });
+    matchCachePuuid = puuid;
+    console.log('[Riot] Match cache ready:', matchCache.length, 'games');
+  } catch(e) { console.warn('[Riot] Match cache failed:', e); }
+}
+
+function renderMatchHistory(ch) {
+  const wrap  = document.getElementById('r-match-history');
+  const label = wrap.querySelector('.mh-label');
+  const dots  = wrap.querySelector('.mh-dots');
+  dots.innerHTML = '';
+
+  if (!riotProfile || !matchCache.length) { wrap.style.display = 'none'; return; }
+
+  const champKey = champKeyMap[ch.id];
+  const games    = matchCache.filter(m => m.championId === champKey).slice(0, 5);
+
+  wrap.style.display = 'flex';
+  if (!games.length) {
+    label.textContent = 'No recent ranked games on this champion';
+    return;
+  }
+  label.textContent = `Last ${games.length} ranked game${games.length !== 1 ? 's' : ''} on ${ch.name}`;
+  games.forEach(g => {
+    const d = document.createElement('div');
+    d.className   = 'mh-dot ' + (g.win ? 'win' : 'loss');
+    d.textContent = g.win ? 'W' : 'L';
+    dots.appendChild(d);
+  });
+}
+
+// ─────────────────────────────────────────────────────
+//  LP SESSION TRACKING
+// ─────────────────────────────────────────────────────
+let sessionStartLP   = null;
+let sessionStartTier = null;
+
+function renderLPDelta() {
+  const el = document.getElementById('rp-delta');
+  if (!el || !riotProfile || !riotProfile.tier || sessionStartLP === null) {
+    if (el) el.style.display = 'none';
+    return;
+  }
+  if (riotProfile.tier !== sessionStartTier) { el.style.display = 'none'; return; }
+  const delta = riotProfile.lp - sessionStartLP;
+  el.style.display = 'block';
+  if (delta > 0)      { el.textContent = `▲ +${delta} LP this session`; el.className = 'pos'; }
+  else if (delta < 0) { el.textContent = `▼ ${delta} LP this session`;  el.className = 'neg'; }
+  else                { el.textContent = `— 0 LP this session`;          el.className = 'zero'; }
+}
+
+// ─────────────────────────────────────────────────────
+//  AUTO-REFRESH RANK  (every 10 minutes)
+// ─────────────────────────────────────────────────────
+let autoRefreshTimer = null;
+
+async function refreshRankSilently() {
+  if (!riotConfig || !riotProfile) return;
+  try {
+    const h     = { 'X-Riot-Token': riotConfig.key };
+    const puuid = riotProfile.puuid;
+    let rnkData = [];
+
+    try {
+      const r = await fetch(
+        `https://${riotConfig.platform}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`,
+        { headers: h }
+      );
+      if (r.ok) rnkData = await r.json();
+    } catch(e) {}
+
+    if (!rnkData.length && riotProfile.sumId) {
+      try {
+        const r2 = await fetch(
+          `https://${riotConfig.platform}.api.riotgames.com/lol/league/v4/entries/by-summoner/${riotProfile.sumId}`,
+          { headers: h }
+        );
+        if (r2.ok) rnkData = await r2.json();
+      } catch(e) {}
+    }
+
+    const solo = rnkData.find(e => e.queueType === 'RANKED_SOLO_5x5')
+              || rnkData.find(e => e.queueType === 'RANKED_FLEX_SR')
+              || null;
+    if (solo) {
+      riotProfile.tier       = solo.tier;
+      riotProfile.rank       = solo.rank;
+      riotProfile.lp         = solo.leaguePoints;
+      riotProfile.wins       = solo.wins;
+      riotProfile.losses     = solo.losses;
+      riotProfile.queueLabel = solo.queueType === 'RANKED_FLEX_SR' ? ' (Flex)' : '';
+      renderRiotProfilePanel();
+    }
+    // Also refresh match history
+    await fetchMatchHistoryCache(riotConfig, puuid);
+    console.log('[Riot] Auto-refresh complete');
+  } catch(e) { console.warn('[Riot] Auto-refresh failed:', e); }
+}
+
+function startAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer = setInterval(refreshRankSilently, 10 * 60 * 1000);
+}
+function stopAutoRefresh() {
+  if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+}
+
+// Mastery ring colors drawn on wheel canvas
+const MASTERY_RING = {
+  7: '#f0c030', 6: '#9c6fff', 5: '#ff4040',
+  4: '#4dd0e1', 3: '#888888',
+};
+
+// ─────────────────────────────────────────────────────
+//  LIVE GAME  (Porofessor-style)
+// ─────────────────────────────────────────────────────
+const TIER_SHORT = {
+  IRON:'I', BRONZE:'B', SILVER:'S', GOLD:'G',
+  PLATINUM:'P', EMERALD:'E', DIAMOND:'D',
+  MASTER:'M', GRANDMASTER:'GM', CHALLENGER:'C'
+};
+const MASTERY_COLORS = { 7:'#f0c030', 6:'#9c6fff', 5:'#ff4040', 4:'#4dd0e1', 3:'#888' };
+
+function openLiveGame() {
+  document.getElementById('lg-ov').classList.add('on');
+  refreshLiveGame();
+}
+function closeLiveGame() {
+  document.getElementById('lg-ov').classList.remove('on');
+}
+
+async function refreshLiveGame() {
+  const body   = document.getElementById('lg-body');
+  const status = document.getElementById('lg-status');
+  body.className   = 'lg-loading';
+  body.innerHTML   = 'Checking for active game...';
+  status.textContent = 'Fetching...';
+
+  if (!riotConfig || !riotProfile) {
+    body.className = 'lg-not-in-game';
+    body.innerHTML = 'No Riot account connected.';
+    status.textContent = '';
+    return;
+  }
+
+  const h     = { 'X-Riot-Token': riotConfig.key };
+  const puuid = riotProfile.puuid;
+
+  let gameData = null;
+  try {
+    const res = await fetch(
+      `https://${riotConfig.platform}.api.riotgames.com/lol/spectator/v5/active-games/by-summoner/${puuid}`,
+      { headers: h }
+    );
+    if (res.ok) gameData = await res.json();
+  } catch(e) {}
+
+  if (!gameData || !gameData.participants) {
+    body.className = 'lg-not-in-game';
+    body.innerHTML = 'Not currently in a game.<br><span style="font-size:0.58rem;color:#333;letter-spacing:2px;">Start a game and refresh.</span>';
+    status.textContent = 'Not in game';
+    document.getElementById('lg-open-btn').classList.remove('in-game');
+    return;
+  }
+
+  document.getElementById('lg-open-btn').classList.add('in-game');
+  const queueLabels = { 420:'Ranked Solo/Duo', 440:'Ranked Flex', 400:'Normal Draft', 430:'Normal Blind', 450:'ARAM', 900:'URF', 1700:'Arena' };
+  status.textContent = queueLabels[gameData.gameQueueConfigId] || ('Queue ' + gameData.gameQueueConfigId);
+
+  const keyToId = {};
+  Object.entries(champKeyMap).forEach(([id, key]) => { keyToId[key] = id; });
+  const blue = gameData.participants.filter(p => p.teamId === 100);
+  const red  = gameData.participants.filter(p => p.teamId === 200);
+
+  async function fetchPlayerInfo(p) {
+    let rankData = null, masteryLevel = 0, masteryPoints = 0;
+    let champWins = 0, champGames = 0, champKda = null;
+    try {
+      const r = await fetch(
+        `https://${riotConfig.platform}.api.riotgames.com/lol/league/v4/entries/by-puuid/${p.puuid}`,
+        { headers: h }
+      );
+      if (r.ok) {
+        const arr = await r.json();
+        rankData = arr.find(e => e.queueType === 'RANKED_SOLO_5x5')
+                || arr.find(e => e.queueType === 'RANKED_FLEX_SR') || null;
+      }
+    } catch(e) {}
+    try {
+      const m = await fetch(
+        `https://${riotConfig.platform}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/${p.puuid}/by-champion/${p.championId}`,
+        { headers: h }
+      );
+      if (m.ok) { const md = await m.json(); masteryLevel = md.championLevel||0; masteryPoints = md.championPoints||0; }
+    } catch(e) {}
+    try {
+      const qType = gameData.gameQueueConfigId === 440 ? 440 : 420;
+      const idsRes = await fetch(
+        `https://${riotConfig.cluster}.api.riotgames.com/lol/match/v5/matches/by-puuid/${p.puuid}/ids?queue=${qType}&champion=${p.championId}&start=0&count=10`,
+        { headers: h }
+      );
+      if (idsRes.ok) {
+        const ids = await idsRes.json();
+        if (ids.length > 0) {
+          const details = await Promise.all(
+            ids.slice(0,5).map(id =>
+              fetch(`https://${riotConfig.cluster}.api.riotgames.com/lol/match/v5/matches/${id}`, { headers: h })
+                .then(r => r.ok ? r.json() : null).catch(() => null)
+            )
+          );
+          let kills=0, deaths=0, assists=0, wins=0, parsed=0;
+          details.forEach(d => {
+            if (!d) return;
+            const me = d.info && d.info.participants && d.info.participants.find(x => x.puuid === p.puuid);
+            if (!me) return;
+            kills+=me.kills; deaths+=me.deaths; assists+=me.assists;
+            if (me.win) wins++; parsed++;
+          });
+          if (parsed > 0) {
+            champWins=wins; champGames=parsed;
+            const k=(kills/parsed).toFixed(1), d=(deaths/parsed).toFixed(1), a=(assists/parsed).toFixed(1);
+            champKda = { k, d, a, ratio: deaths>0 ? ((kills+assists)/deaths).toFixed(2) : 'Perfect' };
+          }
+        }
+      }
+    } catch(e) {}
+    return { p, rankData, masteryLevel, masteryPoints, champWins, champGames, champKda };
+  }
+
+  body.className = 'lg-loading';
+  body.innerHTML = 'Loading player data...';
+  const results = await Promise.all([...blue, ...red].map(fetchPlayerInfo));
+  renderLiveGameBoard(blue, red, results, puuid, keyToId);
+}
+
+function renderLiveGameBoard(blue, red, results, myPuuid, keyToId) {
+  const body = document.getElementById('lg-body');
+  body.className = ''; body.innerHTML = '';
+
+  function buildTeamSection(teamParticipants, teamClass, label) {
+    const section = document.createElement('div'); section.className = 'lg-team-section';
+    const lbl = document.createElement('div');
+    lbl.className = 'lg-team-label ' + teamClass;
+    lbl.textContent = label;
+    section.appendChild(lbl);
+    const row = document.createElement('div'); row.className = 'lg-cards-row';
+
+    teamParticipants.forEach(p => {
+      const info    = results.find(r => r.p.puuid === p.puuid) || {};
+      const champId = keyToId[p.championId] || null;
+      const champ   = champId ? champions.find(c => c.id === champId) : null;
+      const isMe    = p.puuid === myPuuid;
+
+      const card = document.createElement('div');
+      card.className = 'lg-card ' + teamClass + '-t' + (isMe ? ' is-me' : '');
+
+      // Champion icon + player name
+      const cardTop = document.createElement('div'); cardTop.className = 'lg-card-top';
+      const champWrap = document.createElement('div'); champWrap.className = 'lg-champ-wrap';
+      const cImg = document.createElement('img'); cImg.className = 'lg-champ-img';
+      cImg.src = champId ? 'https://ddragon.leagueoflegends.com/cdn/' + version + '/img/champion/' + champId + '.png' : '';
+      cImg.alt = champ ? champ.name : '';
+      cImg.onerror = () => { cImg.style.opacity = '0.2'; };
+      champWrap.appendChild(cImg);
+      if (info.masteryLevel > 0) {
+        const mb = document.createElement('div'); mb.className = 'lg-mastery-badge';
+        mb.style.color = MASTERY_COLORS[info.masteryLevel] || '#aaa';
+        mb.style.borderColor = MASTERY_COLORS[info.masteryLevel] || '#333';
+        mb.textContent = 'M' + info.masteryLevel;
+        champWrap.appendChild(mb);
+      }
+      const names = document.createElement('div'); names.className = 'lg-card-names';
+      const nameEl = document.createElement('div'); nameEl.className = 'lg-player-name';
+      nameEl.textContent = (p.riotIdGameName || p.summonerName || 'Unknown') + (isMe ? ' (You)' : '');
+      const champNm = document.createElement('div'); champNm.className = 'lg-champ-name';
+      champNm.textContent = champ ? champ.name : '';
+      names.append(nameEl, champNm);
+      cardTop.append(champWrap, names);
+      card.appendChild(cardTop);
+
+      // Champion W/R + KDA
+      const cs = document.createElement('div'); cs.className = 'lg-champ-stats';
+      if (info.champGames > 0) {
+        const wr = Math.round(info.champWins / info.champGames * 100);
+        const wrColor = wr >= 60 ? '#22ff88' : wr >= 50 ? '#c8aa6e' : '#ff7777';
+        const wrEl = document.createElement('div'); wrEl.className = 'lg-champ-wr';
+        wrEl.innerHTML = '<span style="color:' + wrColor + '">' + wr + '%</span>';
+        const sub = document.createElement('div'); sub.className = 'lg-champ-wr-sub';
+        sub.textContent = 'Win Rate (' + info.champGames + ' games)';
+        cs.append(wrEl, sub);
+        if (info.champKda) {
+          const kdaEl = document.createElement('div'); kdaEl.className = 'lg-kda';
+          const rVal = parseFloat(info.champKda.ratio);
+          const rc = rVal >= 3 ? '#f0c030' : rVal >= 2 ? '#aaa' : '#ff7777';
+          kdaEl.innerHTML = info.champKda.k + ' / <span style="color:#ff7777">' + info.champKda.d + '</span> / ' + info.champKda.a + ' &nbsp;<span style="color:' + rc + '">(' + info.champKda.ratio + ' KDA)</span>';
+          cs.appendChild(kdaEl);
+        }
+      } else {
+        const nd = document.createElement('div'); nd.className = 'lg-champ-wr-sub';
+        nd.style.padding = '6px 0';
+        nd.textContent = info.masteryPoints > 0 ? Math.round(info.masteryPoints/1000) + 'K Mastery Pts' : 'No ranked data';
+        cs.appendChild(nd);
+      }
+      card.appendChild(cs);
+
+      // Rank + season W/L
+      const rankSec = document.createElement('div'); rankSec.className = 'lg-rank-section';
+      const badge   = document.createElement('div'); badge.className = 'lg-rank-badge';
+      const wlEl    = document.createElement('div'); wlEl.className = 'lg-season-wl';
+      if (info.rankData) {
+        const { tier, rank: div, leaguePoints: lp, wins, losses } = info.rankData;
+        const total = wins + losses;
+        const wr    = total ? Math.round(wins / total * 100) : 0;
+        const col   = TIER_COLORS[tier] || '#c8aa6e';
+        badge.textContent      = (TIER_SHORT[tier] || tier) + ' ' + div + ' - ' + lp + ' LP';
+        badge.style.color      = col;
+        badge.style.background = col + '22';
+        badge.style.border     = '1px solid ' + col + '44';
+        const wc = wr >= 55 ? '#22ff88' : wr >= 50 ? '#c8aa6e' : '#ff7777';
+        wlEl.innerHTML = wins + 'W ' + losses + 'L &nbsp;<span style="color:' + wc + '">' + wr + '%</span>';
+      } else {
+        badge.textContent = 'Unranked';
+        badge.style.color = '#444';
+        badge.style.background = 'rgba(255,255,255,0.02)';
+        badge.style.border = '1px solid #1a1a1a';
+        wlEl.textContent = '--';
+      }
+      rankSec.append(badge, wlEl);
+      card.appendChild(rankSec);
+      row.appendChild(card);
+    });
+
+    section.appendChild(row);
+    return section;
+  }
+
+  body.appendChild(buildTeamSection(blue, 'blue', 'Blue Team'));
+  body.appendChild(buildTeamSection(red,  'red',  'Red Team'));
+}
+
+
+
+// ─────────────────────────────────────────────────────
+//  GO
+// ─────────────────────────────────────────────────────
+init();
+
+// Load saved Riot config after init
+(async function() {
+  const saved = loadRiotConfig();
+  if (saved) {
+    riotConfig = saved;
+    // Wait a tick so champions are loaded
+    setTimeout(async () => {
+      const ok = await connectRiotAccount(saved);
+      if (!ok) {
+        // Key may have changed — show connect panel silently
+        console.warn('Saved Riot config failed, may need new key');
+        renderRiotProfilePanel();
+      }
+    }, 2000);
+  }
+})();
+
+
+</script>
+</body>
+</html>
+
