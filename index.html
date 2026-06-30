@@ -1275,7 +1275,7 @@
 <!-- ── RIOT PROFILE PANEL ────────────────────────── -->
 <div id="riot-profile">
   <!-- shown when NOT connected -->
-  <button id="rp-connect-btn" onclick="openRiotSettings()">⚙ Connect Account</button>
+  <button id="rp-connect-btn" onclick="openRiotSettings()" data-i18n="rp_connect">⚙ Connect Account</button>
   <!-- shown when connected (hidden by default) -->
   <div id="rp-connected" style="display:none; align-items:center; gap:10px; flex:1;">
     <div id="rp-icon-wrap">
@@ -1295,17 +1295,17 @@
 <!-- ── RIOT SETTINGS OVERLAY ─────────────────────── -->
 <div id="riot-settings-ov">
   <div class="rs-box">
-    <div class="rs-title">Connect Account <span class="rs-optional">Optional</span></div>
-    <div class="rs-sub">Power-user feature — bring your own Riot dev key. Your data stays in this browser and is sent only to Riot's official API.</div>
-    <div class="rs-label">Riot API Key</div>
+    <div class="rs-title" data-i18n="rs_title">Connect Account <span class="rs-optional">Optional</span></div>
+    <div class="rs-sub" data-i18n="rs_sub">Power-user feature — bring your own Riot dev key. Your data stays in this browser and is sent only to Riot's official API.</div>
+    <div class="rs-label" data-i18n="rs_key">Riot API Key</div>
     <input class="rs-input" id="rs-key" type="password" placeholder="RGAPI-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-    <div class="rs-note">Get a key at <a href="https://developer.riotgames.com" target="_blank" rel="noopener">developer.riotgames.com</a>. Personal dev keys expire every 24h, and browsers may block direct calls (CORS) — a small proxy can be required. The wheel works fully without connecting.</div>
-    <div class="rs-label">Riot ID</div>
+    <div class="rs-note" data-i18n="rs_note">Get a key at <a href="https://developer.riotgames.com" target="_blank" rel="noopener">developer.riotgames.com</a>. Personal dev keys expire every 24h, and browsers may block direct calls (CORS) — a small proxy can be required. The wheel works fully without connecting.</div>
+    <div class="rs-label" data-i18n="rs_id">Riot ID</div>
     <div class="rs-row">
       <input class="rs-input" id="rs-name" placeholder="Game Name" style="flex:2;">
       <input class="rs-input" id="rs-tag"  placeholder="TAG" style="flex:1;">
     </div>
-    <div class="rs-label">Region</div>
+    <div class="rs-label" data-i18n="rs_region">Region</div>
     <select class="rs-select" id="rs-region">
       <option value="tr1|europe">TR — Turkey</option>
       <option value="euw1|europe">EUW — Europe West</option>
@@ -1320,41 +1320,41 @@
       <option value="ru|europe">RU — Russia</option>
     </select>
     <div class="rs-btns">
-      <button class="rs-save" onclick="saveRiotSettings()">Connect</button>
-      <button class="rs-cancel" onclick="closeRiotSettings()">Cancel</button>
+      <button class="rs-save" onclick="saveRiotSettings()" data-i18n="rs_save">Connect</button>
+      <button class="rs-cancel" onclick="closeRiotSettings()" data-i18n="rs_cancel">Cancel</button>
     </div>
     <div class="rs-status" id="rs-status"></div>
-    <button class="rs-disconnect" id="rs-disconnect" onclick="disconnectRiot()" style="display:none;">Disconnect Account</button>
+    <button class="rs-disconnect" id="rs-disconnect" onclick="disconnectRiot()" style="display:none;" data-i18n="rs_disconnect">Disconnect Account</button>
   </div>
 </div>
 
 <!-- ── LOADING ─────────────────────────────────── -->
 <div id="loading">
-  <h2>BLACKLIST CHALLENGE</h2>
-  <p>Summoning all champions…</p>
+  <h2 data-i18n="loading_h2">BLACKLIST CHALLENGE</h2>
+  <p data-i18n="loading_p1">Summoning all champions…</p>
   <div class="bar-wrap"><div class="bar-fill" id="bar"></div></div>
   <p id="load-txt" style="color:#444">Connecting to Rift Data...</p>
 </div>
 
 <!-- ── ENTRANCE GATE (start screen + how-to + audio unlock) ── -->
 <div id="enter-gate">
-  <div id="eg-kicker">A League of Legends Champion Roulette</div>
+  <div id="eg-kicker" data-i18n="eg_kicker">A League of Legends Champion Roulette</div>
   <div id="eg-title">Void Lord's<small>Blacklist Challenge</small></div>
-  <div id="eg-how">Spin the wheel to be assigned a champion — revealed in their <b>rarest skin</b>. Queue that champion, play your game, then log the result. <b>Win</b> to grow your streak; <b>lose</b> and they're <b>blacklisted</b> from the wheel for good. Survive as long as you can.</div>
+  <div id="eg-how" data-i18n="eg_how">Spin the wheel to be assigned a champion — revealed in their <b>rarest skin</b>. Queue that champion, play your game, then log the result. <b>Win</b> to grow your streak; <b>lose</b> and they're <b>blacklisted</b> from the wheel for good. Survive as long as you can.</div>
   <div id="eg-steps">
-    <div class="eg-step"><div class="n">1 · SPIN</div><div class="t">Click the wheel to draw a champion at random.</div></div>
-    <div class="eg-step"><div class="n">2 · PLAY</div><div class="t">Queue them, then mark Victory or Defeat.</div></div>
-    <div class="eg-step"><div class="n">3 · SURVIVE</div><div class="t">Losses blacklist the champ. Streaks summon Zilean for a revival.</div></div>
+    <div class="eg-step"><div class="n" data-i18n="eg_s1n">1 · SPIN</div><div class="t" data-i18n="eg_s1t">Click the wheel to draw a champion at random.</div></div>
+    <div class="eg-step"><div class="n" data-i18n="eg_s2n">2 · PLAY</div><div class="t" data-i18n="eg_s2t">Queue them, then mark Victory or Defeat.</div></div>
+    <div class="eg-step"><div class="n" data-i18n="eg_s3n">3 · SURVIVE</div><div class="t" data-i18n="eg_s3t">Losses blacklist the champ. Streaks summon Zilean for a revival.</div></div>
   </div>
   <div id="eg-lang-wrap">
-    <span id="eg-lang-label">Champion Voice Lines</span>
+    <span id="eg-lang-label" data-i18n="eg_lang_label">Champion Voice Lines</span>
     <div id="eg-lang">
       <button data-lang="default" onclick="setVoLocale('default')">English</button>
       <button data-lang="tr_tr" onclick="setVoLocale('tr_tr')">Türkçe</button>
     </div>
   </div>
-  <button id="eg-enter" onclick="enterRift()">Enter the Rift</button>
-  <div id="eg-legal" style="max-width:560px;margin-top:6px;font-family:'Cinzel',serif;font-size:.5rem;line-height:1.6;letter-spacing:.5px;color:#6b5d40;">Unofficial fan project. Not affiliated with or endorsed by Riot Games. League of Legends and all related assets are property of Riot Games, Inc.</div>
+  <button id="eg-enter" onclick="enterRift()" data-i18n="eg_enter">Enter the Rift</button>
+  <div id="eg-legal" data-i18n="eg_legal" style="max-width:560px;margin-top:6px;font-family:'Cinzel',serif;font-size:.5rem;line-height:1.6;letter-spacing:.5px;color:#6b5d40;">Unofficial fan project. Not affiliated with or endorsed by Riot Games. League of Legends and all related assets are property of Riot Games, Inc.</div>
 </div>
 
 <!-- persistent voice-language toggle -->
@@ -1381,15 +1381,15 @@
     <!-- Left: streak / revival / remaining -->
     <div id="hud-left">
       <div class="hud-box hud-yellow">
-        <span class="lbl">Win Streak</span>
+        <span class="lbl" data-i18n="hud_winstreak">Win Streak</span>
         <span class="val" id="s-streak">0</span>
       </div>
       <div class="hud-box hud-cyan">
-        <span class="lbl">Revival Points</span>
+        <span class="lbl" data-i18n="hud_revival">Revival Points</span>
         <span class="val" id="s-revival">0</span>
       </div>
       <div class="hud-box hud-white">
-        <span class="lbl">Remaining</span>
+        <span class="lbl" data-i18n="hud_remaining">Remaining</span>
         <span class="val" id="s-remaining">—</span>
       </div>
     </div>
@@ -1402,12 +1402,12 @@
         <span class="val" id="s-l" style="color:#ff8888;">L: 0</span>
       </div>
       <button class="bl-open-btn" onclick="openBlacklist()">
-        ☠ Blacklist &nbsp;<span id="bl-count">0</span>
+        ☠ <span data-i18n="blacklist_btn">Blacklist</span> &nbsp;<span id="bl-count">0</span>
       </button>
-      <button id="undo-bl-btn" onclick="undoBlacklist()">↩ Undo Blacklist</button>
-      <button id="lg-open-btn" onclick="openLiveGame()">🎮 Live Game</button>
+      <button id="undo-bl-btn" onclick="undoBlacklist()" data-i18n="undo_btn">↩ Undo Blacklist</button>
+      <button id="lg-open-btn" onclick="openLiveGame()" data-i18n="live_btn">🎮 Live Game</button>
       <button class="bl-open-btn" onclick="openWinsHistory()" style="border-color:#c8aa6e55; color:#c8aa6e;">
-        🏆 Champions Won &nbsp;<span id="wh-count">0</span>
+        🏆 <span data-i18n="wins_btn">Champions Won</span> &nbsp;<span id="wh-count">0</span>
       </button>
     </div>
 
@@ -1424,7 +1424,7 @@
     <div id="result-gradient"></div>
   </div>
   <div id="result-content">
-    <div id="r-label">Selected Champion</div>
+    <div id="r-label" data-i18n="r_label">Selected Champion</div>
     <div id="r-name"></div>
     <div id="r-wins"></div>
     <div id="r-match-history">
@@ -1432,10 +1432,10 @@
       <div class="mh-dots"></div>
     </div>
     <div id="r-btns">
-      <button class="btn-win"    onclick="recordResult('win')">Victory</button>
-      <button class="btn-lose"   onclick="recordResult('lose')">Defeat</button>
-      <button class="btn-afk"    onclick="recordAFK()">AFK / No Result</button>
-      <button class="btn-respin" onclick="doRespin()">Spin Again</button>
+      <button class="btn-win"    onclick="recordResult('win')" data-i18n="btn_win">Victory</button>
+      <button class="btn-lose"   onclick="recordResult('lose')" data-i18n="btn_lose">Defeat</button>
+      <button class="btn-afk"    onclick="recordAFK()" data-i18n="btn_afk">AFK / No Result</button>
+      <button class="btn-respin" onclick="doRespin()" data-i18n="btn_respin">Spin Again</button>
     </div>
   </div>
 </div>
@@ -1444,16 +1444,16 @@
 <div class="overlay" id="zilean-ov">
   <div class="z-box">
     <div class="z-img-wrap"><img id="z-img" src="" alt="Zilean"></div>
-    <div class="z-title">⏳ Zilean Appears!</div>
+    <div class="z-title" data-i18n="z_title">⏳ Zilean Appears!</div>
     <div class="z-streak" id="z-streak-txt"></div>
-    <div class="z-text">
+    <div class="z-text" data-i18n="z_text">
       The Chronokeeper has witnessed your streak.<br>
       He offers you a Revival Point — save a blacklisted<br>
       champion and return them to the wheel!
     </div>
     <div class="z-btns">
-      <button class="btn-take"  onclick="handleZilean(true)">Take It!</button>
-      <button class="btn-leave" onclick="handleZilean(false)">Leave It</button>
+      <button class="btn-take"  onclick="handleZilean(true)" data-i18n="btn_take">Take It!</button>
+      <button class="btn-leave" onclick="handleZilean(false)" data-i18n="btn_leave">Leave It</button>
     </div>
   </div>
 </div>
@@ -1462,12 +1462,12 @@
 <div id="lg-ov">
   <div id="lg-header">
     <div>
-      <div id="lg-title">🎮 LIVE GAME</div>
+      <div id="lg-title" data-i18n="lg_title">🎮 LIVE GAME</div>
       <div id="lg-status">Checking…</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <button id="lg-refresh" onclick="refreshLiveGame()">↻ Refresh</button>
-      <button id="lg-close"   onclick="closeLiveGame()">✕ Close</button>
+      <button id="lg-refresh" onclick="refreshLiveGame()" data-i18n="lg_refresh">↻ Refresh</button>
+      <button id="lg-close"   onclick="closeLiveGame()" data-i18n="lg_close">✕ Close</button>
     </div>
   </div>
   <div id="lg-body" class="lg-loading">Checking for active game…</div>
@@ -1477,11 +1477,11 @@
 <div class="overlay" id="bl-ov">
   <div class="bl-box">
     <div class="bl-head">
-      <span>☠ Blacklist</span>
-      <button class="bl-close" onclick="document.getElementById('bl-ov').classList.remove('on')">Close</button>
+      <span data-i18n="bl_head">☠ Blacklist</span>
+      <button class="bl-close" onclick="document.getElementById('bl-ov').classList.remove('on')" data-i18n="close_btn">Close</button>
     </div>
     <div class="bl-scroll" id="bl-scroll">
-      <div class="bl-empty">No champions blacklisted yet.</div>
+      <div class="bl-empty" data-i18n="bl_empty">No champions blacklisted yet.</div>
     </div>
   </div>
 </div>
@@ -1490,14 +1490,14 @@
 <div class="overlay" id="wh-ov">
   <div class="wh-box">
     <div class="wh-head">
-      <span>🏆 Champions Won</span>
+      <span data-i18n="wh_head">🏆 Champions Won</span>
       <div style="display:flex;gap:10px;align-items:center;">
-        <span class="wh-sub" id="wh-sub">sorted by wins</span>
-        <button class="bl-close" onclick="document.getElementById('wh-ov').classList.remove('on')">Close</button>
+        <span class="wh-sub" id="wh-sub" data-i18n="wh_sub">sorted by wins</span>
+        <button class="bl-close" onclick="document.getElementById('wh-ov').classList.remove('on')" data-i18n="close_btn">Close</button>
       </div>
     </div>
     <div class="wh-scroll" id="wh-scroll">
-      <div class="wh-empty">No wins recorded yet.<br>Spin the wheel and claim victory!</div>
+      <div class="wh-empty" data-i18n="wh_empty">No wins recorded yet.<br>Spin the wheel and claim victory!</div>
     </div>
   </div>
 </div>
@@ -1534,41 +1534,41 @@
   <div id="sc-bg"></div>
   <div id="sc-num"></div>
   <div id="sc-label"></div>
-  <div id="sc-sub">WIN STREAK</div>
+  <div id="sc-sub" data-i18n="sc_sub">WIN STREAK</div>
 </div>
 
 <!-- ── GAME OVER ─────────────────────────────────── -->
 <div class="overlay" id="go-ov">
   <div class="go-box">
-    <div class="go-title">DEFEAT</div>
-    <div class="go-sub">All champions have been blacklisted.</div>
+    <div class="go-title" data-i18n="go_title">DEFEAT</div>
+    <div class="go-sub" data-i18n="go_sub">All champions have been blacklisted.</div>
     <!-- final champion that ended the run -->
     <div class="go-final" id="go-final-row">
       <img id="go-final-img" src="" alt="">
       <div class="go-final-info">
         <div class="go-final-name" id="go-final-name">—</div>
-        <div class="go-final-sub">Final Blacklisted Champion</div>
+        <div class="go-final-sub" data-i18n="go_final_sub">Final Blacklisted Champion</div>
       </div>
     </div>
     <!-- stat pills -->
     <div class="go-stat-row">
       <div class="go-stat">
-        <div class="gs-lbl">Total Wins</div>
+        <div class="gs-lbl" data-i18n="gs_wins">Total Wins</div>
         <div class="gs-val" id="go-sw">0</div>
       </div>
       <div class="go-stat">
-        <div class="gs-lbl">Total Losses</div>
+        <div class="gs-lbl" data-i18n="gs_losses">Total Losses</div>
         <div class="gs-val" id="go-sl">0</div>
       </div>
       <div class="go-stat">
-        <div class="gs-lbl">Best Streak</div>
+        <div class="gs-lbl" data-i18n="gs_streak">Best Streak</div>
         <div class="gs-val" id="go-ss">0</div>
       </div>
     </div>
     <!-- top champions -->
-    <div class="go-top-label">TOP CHAMPIONS THIS RUN</div>
+    <div class="go-top-label" data-i18n="go_top_label">TOP CHAMPIONS THIS RUN</div>
     <div class="go-top-row" id="go-top-row"></div>
-    <button class="btn-reset" onclick="resetGame()">Play Again</button>
+    <button class="btn-reset" onclick="resetGame()" data-i18n="btn_reset">Play Again</button>
   </div>
 </div>
 
@@ -1576,10 +1576,10 @@
 <div id="wins-sidebar">
   <button id="sb-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">❮</button>
   <div id="sb-tabs">
-    <button class="sb-tab-btn active" id="sb-tab-victories" onclick="switchSidebarTab('victories')">🏆 Victories</button>
-    <button class="sb-tab-btn"        id="sb-tab-log"       onclick="switchSidebarTab('log')">📋 Session Log</button>
+    <button class="sb-tab-btn active" id="sb-tab-victories" onclick="switchSidebarTab('victories')" data-i18n="sb_victories">🏆 Victories</button>
+    <button class="sb-tab-btn"        id="sb-tab-log"       onclick="switchSidebarTab('log')" data-i18n="sb_log">📋 Session Log</button>
   </div>
-  <div id="sb-list"><div class="sb-empty">No wins yet.<br>Spin the wheel!</div></div>
+  <div id="sb-list"><div class="sb-empty" data-i18n="sb_empty">No wins yet.<br>Spin the wheel!</div></div>
 </div>
 
 <!-- ── TOAST ─────────────────────────────────────── -->
@@ -1680,12 +1680,12 @@ const IR = 66; // inner button radius
 // ─────────────────────────────────────────────────────
 async function init() {
   try {
-    setLoad(8, 'Fetching patch version…');
+    setLoad(8, L()?'Yama sürümü alınıyor…':'Fetching patch version…');
     const vRes  = await fetch('https://ddragon.leagueoflegends.com/api/versions.json');
     const vList = await vRes.json();
     version = vList[0];
 
-    setLoad(25, `Loading champion roster (${version})…`);
+    setLoad(25, L()?`Şampiyon listesi yükleniyor (${version})…`:`Loading champion roster (${version})…`);
     const cRes  = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`);
     const cData = await cRes.json();
 
@@ -1797,7 +1797,7 @@ async function init() {
       }).catch(() => {}); // CD data non-critical
     }).catch(() => {}); // non-critical — lazy fetchSkins() still works as fallback
 
-    setLoad(40, `Loading ${champions.length} portraits…`);
+    setLoad(40, L()?`${champions.length} portre yükleniyor…`:`Loading ${champions.length} portraits…`);
 
     let done = 0;
     const total = champions.length;
@@ -1808,7 +1808,7 @@ async function init() {
         img.onload = img.onerror = () => {
           if (img.complete && img.naturalWidth) ch.img = img;
           done++;
-          setLoad(40 + Math.round(done/total*55), `Loading portraits… ${done}/${total}`);
+          setLoad(40 + Math.round(done/total*55), L()?`Portreler yükleniyor… ${done}/${total}`:`Loading portraits… ${done}/${total}`);
           if (done % 30 === 0 || done === total) drawWheel();
           res();
         };
@@ -1824,13 +1824,13 @@ async function init() {
     const zil = champions.find(c => c.id === 'Zilean');
     if (zil && zil.img) document.getElementById('z-img').src = zil.img.src;
 
-    setLoad(100, 'Ready!');
+    setLoad(100, L()?'Hazır!':'Ready!');
     drawWheel();
     updateStats();
     setTimeout(() => document.getElementById('loading').style.display='none', 400);
 
   } catch(e) {
-    document.getElementById('load-txt').textContent = 'Error loading data. Please refresh.';
+    document.getElementById('load-txt').textContent = L()?'Veri yüklenirken hata. Lütfen sayfayı yenileyin.':'Error loading data. Please refresh.';
     console.error(e);
   }
 }
@@ -2054,6 +2054,7 @@ function setVoLocale(loc){
   voLocale = (loc === 'tr_tr') ? 'tr_tr' : 'default';
   try { localStorage.setItem(VO_LOCALE_KEY, voLocale); } catch(e) {}
   updateLangUI();
+  applyLang();
 }
 function updateLangUI(){
   document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === voLocale));
@@ -2068,6 +2069,20 @@ function enterRift(){
 }
 // reflect saved language on the toggle controls
 updateLangUI();
+
+// ── i18n runtime (full TR/EN UI) ──
+const I18N = {"eg_kicker":{"en":"A League of Legends Champion Roulette","tr":"Bir League of Legends Şampiyon Çarkı"},"eg_how":{"en":"Spin the wheel to be assigned a champion — revealed in their <b>rarest skin</b>. Queue that champion, play your game, then log the result. <b>Win</b> to grow your streak; <b>lose</b> and they're <b>blacklisted</b> from the wheel for good. Survive as long as you can.","tr":"Çarkı çevir, sana bir şampiyon atansın — <b>en nadir kostümüyle</b> ortaya çıkar. O şampiyonla sıraya gir, maçını oyna, sonra sonucu işaretle. <b>Kazan</b> ve serini büyüt; <b>kaybet</b>, o şampiyon çarktan <b>temelli kara listeye</b> alınır. Olabildiğince hayatta kal."},"eg_s1n":{"en":"1 · SPIN","tr":"1 · ÇEVİR"},"eg_s1t":{"en":"Click the wheel to draw a champion at random.","tr":"Rastgele bir şampiyon çekmek için çarka tıkla."},"eg_s2n":{"en":"2 · PLAY","tr":"2 · OYNA"},"eg_s2t":{"en":"Queue them, then mark Victory or Defeat.","tr":"O şampiyonla sıraya gir, sonra Zafer ya da Yenilgi işaretle."},"eg_s3n":{"en":"3 · SURVIVE","tr":"3 · HAYATTA KAL"},"eg_s3t":{"en":"Losses blacklist the champ. Streaks summon Zilean for a revival.","tr":"Yenilgiler şampiyonu kara listeye alır. Seriler diriliş için Zilean'ı çağırır."},"eg_lang_label":{"en":"Champion Voice Lines","tr":"Şampiyon Replikleri"},"eg_enter":{"en":"Enter the Rift","tr":"Vadiye Gir"},"eg_legal":{"en":"Unofficial fan project. Not affiliated with or endorsed by Riot Games. League of Legends and all related assets are property of Riot Games, Inc.","tr":"Resmî olmayan bir hayran projesi. Riot Games ile bağlantılı değildir, onun tarafından onaylanmamıştır. League of Legends ve ilgili tüm içerikler Riot Games, Inc. mülkiyetindedir."},"loading_h2":{"en":"BLACKLIST CHALLENGE","tr":"KARA LİSTE MEYDAN OKUMASI"},"loading_p1":{"en":"Summoning all champions…","tr":"Tüm şampiyonlar çağrılıyor…"},"hud_winstreak":{"en":"Win Streak","tr":"Galibiyet Serisi"},"hud_revival":{"en":"Revival Points","tr":"Diriliş Puanı"},"hud_remaining":{"en":"Remaining","tr":"Kalan"},"blacklist_btn":{"en":"Blacklist","tr":"Kara Liste"},"undo_btn":{"en":"↩ Undo Blacklist","tr":"↩ Kara Listeyi Geri Al"},"live_btn":{"en":"🎮 Live Game","tr":"🎮 Canlı Maç"},"wins_btn":{"en":"Champions Won","tr":"Kazanılanlar"},"r_label":{"en":"Selected Champion","tr":"Seçilen Şampiyon"},"btn_win":{"en":"Victory","tr":"Zafer"},"btn_lose":{"en":"Defeat","tr":"Yenilgi"},"btn_afk":{"en":"AFK / No Result","tr":"AFK / Sonuç Yok"},"btn_respin":{"en":"Spin Again","tr":"Tekrar Çevir"},"z_title":{"en":"⏳ Zilean Appears!","tr":"⏳ Zilean Belirdi!"},"z_text":{"en":"The Chronokeeper has witnessed your streak.<br>He offers you a Revival Point — save a blacklisted<br>champion and return them to the wheel!","tr":"Zaman Bekçisi serine tanık oldu.<br>Sana bir Diriliş Puanı sunuyor — kara listedeki bir<br>şampiyonu kurtar ve çarka geri döndür!"},"btn_take":{"en":"Take It!","tr":"Kabul Et!"},"btn_leave":{"en":"Leave It","tr":"Vazgeç"},"lg_title":{"en":"🎮 LIVE GAME","tr":"🎮 CANLI MAÇ"},"lg_refresh":{"en":"↻ Refresh","tr":"↻ Yenile"},"lg_close":{"en":"✕ Close","tr":"✕ Kapat"},"bl_head":{"en":"☠ Blacklist","tr":"☠ Kara Liste"},"close_btn":{"en":"Close","tr":"Kapat"},"bl_empty":{"en":"No champions blacklisted yet.","tr":"Henüz kara listeye alınmış şampiyon yok."},"wh_head":{"en":"🏆 Champions Won","tr":"🏆 Kazanılan Şampiyonlar"},"wh_sub":{"en":"sorted by wins","tr":"galibiyete göre sıralı"},"wh_empty":{"en":"No wins recorded yet.<br>Spin the wheel and claim victory!","tr":"Henüz galibiyet kaydı yok.<br>Çarkı çevir ve zaferi kap!"},"sc_sub":{"en":"WIN STREAK","tr":"GALİBİYET SERİSİ"},"go_title":{"en":"DEFEAT","tr":"YENİLGİ"},"go_sub":{"en":"All champions have been blacklisted.","tr":"Tüm şampiyonlar kara listeye alındı."},"go_final_sub":{"en":"Final Blacklisted Champion","tr":"Son Kara Listelenen Şampiyon"},"gs_wins":{"en":"Total Wins","tr":"Toplam Galibiyet"},"gs_losses":{"en":"Total Losses","tr":"Toplam Mağlubiyet"},"gs_streak":{"en":"Best Streak","tr":"En İyi Seri"},"go_top_label":{"en":"TOP CHAMPIONS THIS RUN","tr":"BU TURUN EN İYİ ŞAMPİYONLARI"},"btn_reset":{"en":"Play Again","tr":"Tekrar Oyna"},"sb_victories":{"en":"🏆 Victories","tr":"🏆 Zaferler"},"sb_log":{"en":"📋 Session Log","tr":"📋 Oturum Kaydı"},"sb_empty":{"en":"No wins yet.<br>Spin the wheel!","tr":"Henüz galibiyet yok.<br>Çarkı çevir!"},"rs_title":{"en":"Connect Account <span class=\"rs-optional\">Optional</span>","tr":"Hesap Bağla <span class=\"rs-optional\">İsteğe Bağlı</span>"},"rs_sub":{"en":"Power-user feature — bring your own Riot dev key. Your data stays in this browser and is sent only to Riot's official API.","tr":"İleri kullanıcı özelliği — kendi Riot geliştirici anahtarını gir. Verilerin bu tarayıcıda kalır ve yalnızca Riot'un resmî API'sine gönderilir."},"rs_key":{"en":"Riot API Key","tr":"Riot API Anahtarı"},"rs_note":{"en":"Get a key at <a href=\"https://developer.riotgames.com\" target=\"_blank\" rel=\"noopener\">developer.riotgames.com</a>. Personal dev keys expire every 24h, and browsers may block direct calls (CORS) — a small proxy can be required. The wheel works fully without connecting.","tr":"Anahtarı <a href=\"https://developer.riotgames.com\" target=\"_blank\" rel=\"noopener\">developer.riotgames.com</a> adresinden al. Kişisel geliştirici anahtarları 24 saatte bir sona erer; tarayıcılar doğrudan çağrıları (CORS) engelleyebilir — küçük bir proxy gerekebilir. Çark, bağlanmadan da tam çalışır."},"rs_id":{"en":"Riot ID","tr":"Riot Kimliği"},"rs_region":{"en":"Region","tr":"Bölge"},"rs_save":{"en":"Connect","tr":"Bağlan"},"rs_cancel":{"en":"Cancel","tr":"İptal"},"rs_disconnect":{"en":"Disconnect Account","tr":"Hesabı Ayır"},"rp_connect":{"en":"⚙ Connect Account","tr":"⚙ Hesap Bağla"}};
+function L(){ return voLocale === 'tr_tr'; }
+function applyLang(){
+  var lang = L() ? 'tr' : 'en';
+  try { document.documentElement.lang = lang; } catch(e){}
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k = el.getAttribute('data-i18n');
+    if (I18N[k] && I18N[k][lang] != null) el.innerHTML = I18N[k][lang];
+  });
+  try { if (typeof updateStats === 'function') updateStats(); } catch(e){}
+}
+applyLang();
 
 
 // Victory fanfare — ascending bright notes
@@ -2250,7 +2265,7 @@ function showResult(ch) {
   document.getElementById('r-name').textContent = ch.name.toUpperCase();
   const w = ch.wins;
   document.getElementById('r-wins').textContent =
-    w === 0 ? 'First time on this champion!' : `${w} win${w!==1?'s':''} on this champion`;
+    w === 0 ? (L()?'Bu şampiyonla ilk kez!':'First time on this champion!') : (L()?`Bu şampiyonla ${w} galibiyet`:`${w} win${w!==1?'s':''} on this champion`);
 
   // clear old splash
   splash.classList.remove('loaded');
@@ -2425,7 +2440,7 @@ function showChampRevealBanner(ch) {
       : mas.points >= 1000
       ? Math.floor(mas.points / 1000) + 'K'
       : mas.points;
-    masteryEl.textContent = `M${mas.level}  ·  ${pts} pts`;
+    masteryEl.textContent = L()?`M${mas.level}  ·  ${pts} puan`:`M${mas.level}  ·  ${pts} pts`;
     masteryEl.style.color   = masColor;
     masteryEl.style.display = 'block';
   } else {
@@ -2535,7 +2550,7 @@ function recordResult(outcome) {
     sfxVictory();
     saveState();
     pushSessionLog(ch, 'win');
-    toast(`Victory! ${ch.name} — ${ch.wins} win${ch.wins!==1?'s':''} total.`);
+    toast(L()?`Zafer! ${ch.name} — toplam ${ch.wins} galibiyet.`:`Victory! ${ch.name} — ${ch.wins} win${ch.wins!==1?'s':''} total.`);
     // Streak milestone cinematic
     setTimeout(() => showStreakCinematic(winStreak), 400);
     if (winStreak % 3 === 0) setTimeout(showZilean, 700);
@@ -2557,7 +2572,7 @@ function recordResult(outcome) {
     flash.classList.remove('flash');
     void flash.offsetWidth; // reflow
     flash.classList.add('flash');
-    toast(`${ch.name} has been BLACKLISTED! ↩ Undo available.`);
+    toast(L()?`${ch.name} KARA LİSTEYE alındı! ↩ Geri alınabilir.`:`${ch.name} has been BLACKLISTED! ↩ Undo available.`);
     renderBlacklist();
     const remaining = champions.filter(c => !c.blacklisted).length;
     if (!remaining) setTimeout(showGameOver, 700);
@@ -2571,7 +2586,7 @@ function recordResult(outcome) {
 // ─────────────────────────────────────────────────────
 function showZilean() {
   sfxZilean();
-  document.getElementById('z-streak-txt').textContent = `${winStreak}-Win Streak Milestone!`;
+  document.getElementById('z-streak-txt').textContent = L()?`${winStreak} Galibiyetlik Seri Kilometre Taşı!`:`${winStreak}-Win Streak Milestone!`;
   document.getElementById('zilean-ov').classList.add('on');
 }
 function handleZilean(take) {
@@ -2581,9 +2596,9 @@ function handleZilean(take) {
     sfxRevive();
     saveState();
     updateStats(); renderBlacklist();
-    toast('Revival Point claimed! Use it to save a blacklisted champion.');
+    toast(L()?'Diriliş Puanı kazanıldı! Kara listedeki bir şampiyonu kurtarmak için kullan.':'Revival Point claimed! Use it to save a blacklisted champion.');
   } else {
-    toast("Zilean's gift left behind…");
+    toast(L()?"Zilean'ın hediyesi geride bırakıldı…":"Zilean's gift left behind…");
   }
 }
 
@@ -2603,7 +2618,7 @@ function renderWinsHistory() {
   scroll.innerHTML = '';
 
   if (!winners.length) {
-    scroll.innerHTML = '<div class="wh-empty">No wins recorded yet.<br>Spin the wheel and claim victory!</div>';
+    scroll.innerHTML = L()?'<div class="wh-empty">Henüz galibiyet kaydı yok.<br>Çarkı çevir ve zaferi kap!</div>':'<div class="wh-empty">No wins recorded yet.<br>Spin the wheel and claim victory!</div>';
     return;
   }
 
@@ -2628,13 +2643,13 @@ function renderWinsHistory() {
     info.append(nm, barW);
 
     const badge = document.createElement('div'); badge.className = 'wh-badge';
-    badge.innerHTML = `${ch.wins}<span>win${ch.wins !== 1 ? 's' : ''}</span>`;
+    badge.innerHTML = L()?`${ch.wins}<span>galibiyet</span>`:`${ch.wins}<span>win${ch.wins !== 1 ? 's' : ''}</span>`;
 
     // small blacklisted tag if applicable
     if (ch.blacklisted) {
       const tag = document.createElement('div');
       tag.style.cssText = 'font-size:.48rem;letter-spacing:1px;color:#e05555;text-transform:uppercase;margin-top:3px;';
-      tag.textContent = '☠ blacklisted';
+      tag.textContent = L()?'☠ kara listede':'☠ blacklisted';
       info.appendChild(tag);
     }
 
@@ -2654,7 +2669,7 @@ function renderBlacklist() {
   const scroll = document.getElementById('bl-scroll');
   scroll.innerHTML = '';
   if (!bl.length) {
-    scroll.innerHTML = '<div class="bl-empty">No champions blacklisted yet.</div>';
+    scroll.innerHTML = L()?'<div class="bl-empty">Henüz kara listeye alınmış şampiyon yok.</div>':'<div class="bl-empty">No champions blacklisted yet.</div>';
     return;
   }
   bl.forEach(ch => {
@@ -2662,7 +2677,7 @@ function renderBlacklist() {
     const img = document.createElement('img'); img.src = ch.img ? ch.img.src : ''; img.alt = ch.name;
     const nm  = document.createElement('span'); nm.className = 'bl-name'; nm.textContent = ch.name;
     const ws  = document.createElement('span'); ws.className = 'bl-wins'; ws.textContent = ch.wins ? `${ch.wins}W` : '';
-    const btn = document.createElement('button'); btn.className = 'revive-btn'; btn.textContent = 'Revive';
+    const btn = document.createElement('button'); btn.className = 'revive-btn'; btn.textContent = L()?'Dirilt':'Revive';
     btn.disabled = revivalPts <= 0;
     btn.onclick = () => reviveChamp(ch);
     row.append(img, nm, ws, btn);
@@ -2678,7 +2693,7 @@ function reviveChamp(ch) {
   highlighted = null;
   sfxRevive();
   saveState();
-  toast(`${ch.name} has been REVIVED!`);
+  toast(L()?`${ch.name} DİRİLTİLDİ!`:`${ch.name} has been REVIVED!`);
   updateStats(); renderBlacklist(); drawWheel();
 }
 
@@ -2695,7 +2710,7 @@ function undoBlacklist() {
   highlighted    = null;
   document.getElementById('undo-bl-btn').style.display = 'none';
   saveState();
-  toast(`↩ Undone — ${ch.name} is back on the wheel.`);
+  toast(L()?`↩ Geri alındı — ${ch.name} tekrar çarkta.`:`↩ Undone — ${ch.name} is back on the wheel.`);
   updateStats(); renderBlacklist(); drawWheel();
 }
 
@@ -2715,7 +2730,7 @@ function renderSidebarLog() {
   const list = document.getElementById('sb-list');
   list.innerHTML = '';
   if (!sessionLog.length) {
-    list.innerHTML = '<div class="sb-empty">No games yet this session.</div>';
+    list.innerHTML = L()?'<div class="sb-empty">Bu oturumda henüz maç yok.</div>':'<div class="sb-empty">No games yet this session.</div>';
     return;
   }
   sessionLog.forEach(({ ch, outcome, time }) => {
@@ -2883,7 +2898,7 @@ function recordAFK() {
   selected = null;
   highlighted = null;
   drawWheel();
-  toast('AFK noted — champion stays on the wheel. No result recorded.');
+  toast(L()?'AFK kaydedildi — şampiyon çarkta kalır. Sonuç kaydedilmedi.':'AFK noted — champion stays on the wheel. No result recorded.');
 }
 
 // ─────────────────────────────────────────────────────
@@ -2952,7 +2967,7 @@ function renderWinsSidebar() {
   const winners = champions.filter(c => c.wins > 0).sort((a, b) => b.wins - a.wins);
   list.innerHTML = '';
   if (!winners.length) {
-    list.innerHTML = '<div class="sb-empty">No wins yet.<br>Spin the wheel!</div>';
+    list.innerHTML = L()?'<div class="sb-empty">Henüz galibiyet yok.<br>Çarkı çevir!</div>':'<div class="sb-empty">No wins yet.<br>Spin the wheel!</div>';
     return;
   }
   winners.forEach(ch => {
@@ -2974,8 +2989,8 @@ function updateStats() {
   document.getElementById('s-streak').textContent    = winStreak;
   document.getElementById('s-revival').textContent   = revivalPts;
   document.getElementById('s-remaining').textContent = champions.filter(c=>!c.blacklisted).length;
-  document.getElementById('s-w').textContent  = `W: ${totalWins}`;
-  document.getElementById('s-l').textContent  = `L: ${totalLosses}`;
+  document.getElementById('s-w').textContent  = `${L()?'G':'W'}: ${totalWins}`;
+  document.getElementById('s-l').textContent  = `${L()?'M':'L'}: ${totalLosses}`;
   document.getElementById('wh-count').textContent = champions.filter(c=>c.wins>0).length;
   if (sidebarTab === 'victories') renderWinsSidebar();
   else renderSidebarLog();
@@ -3099,7 +3114,7 @@ async function saveRiotSettings() {
     riotConfig = cfg;
     saveRiotConfig(cfg);
     closeRiotSettings();
-    toast('Riot account connected!');
+    toast(L()?'Riot hesabı bağlandı!':'Riot account connected!');
   }
 }
 
@@ -3113,7 +3128,7 @@ function disconnectRiot() {
   renderRiotProfilePanel();
   closeRiotSettings();
   drawWheel();
-  toast('Account disconnected.');
+  toast(L()?'Hesap bağlantısı kesildi.':'Account disconnected.');
 }
 
 async function connectRiotAccount(cfg) {
