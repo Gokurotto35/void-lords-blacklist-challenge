@@ -1,5 +1,7 @@
 ﻿# Void Lord's Blacklist Challenge
 
+**Live:** https://voidlordsblacklistchallenge.netlify.app/
+
 Private project. A personal League of Legends champion roulette: spin the wheel, get a champion revealed in their rarest skin, then survive the run. Win to build your streak; lose and that champion is blacklisted for good.
 
 ![Void Lord's Blacklist Challenge](og-image.jpg)
